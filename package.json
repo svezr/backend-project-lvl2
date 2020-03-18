@@ -1,0 +1,30 @@
+{
+  "name": "gendiff",
+  "version": "1.0.0",
+  "description": "Compares two configuration files and shows a difference.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svezr/backend-project-lvl2.git"
+  },
+  "keywords": [
+    "config",
+    "difference",
+    "gendif",
+    "compare",
+    "files"
+  ],
+  "author": "svezr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/svezr/backend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/svezr/backend-project-lvl2#readme",
+  "devDependencies": {
+    "commander": "^5.0.0"
+  }
+}
