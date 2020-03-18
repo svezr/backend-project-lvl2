@@ -12,6 +12,8 @@ program
   })
   .parse(process.argv);
 
-
+export const genDiff = (pathToFile1, pathToFile2) => {
+  
+}
 
   // console.log(program.args);
