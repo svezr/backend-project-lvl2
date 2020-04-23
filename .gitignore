@@ -5,7 +5,4 @@ dist/*
 backup/*
 testfile1.json
 testfile2.json
-test.js
 .vscoode/*
-struct1.json
-struct2.json
