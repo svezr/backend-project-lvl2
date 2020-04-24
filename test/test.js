@@ -5,9 +5,14 @@ import fs, { readFileSync } from 'fs';
 //  todo: проверить, если указываются относительные пути (напр, ./qwe.test)????
 
 const normalizeObject = (obj) => {
-  entries = Object.entries(obj);
+  const entries = Object.entries(obj);
 
-  return entries.reduce((acc, item) => acc[item[0]] = item[1], {});
+  const fn = (acc, item) => {
+    acc[item[0]] = item[1];
+    return acc;
+  };
+
+  return entries.reduce(fn, {});
 }
 
 const getJsonDataFromFile = (filePath) => {
@@ -22,36 +27,76 @@ const getJsonDataFromFile = (filePath) => {
   return returnValue;
 };
 
-const getFullFilePath = (fileName) => {  
-  return path.resolve(process.cwd(), fileName);
+const getFullFilePath = (fileName) => { 
+  return path.isAbsolute(fileName)  ? fileName : path.resolve(process.cwd(), fileName);
 };
 
 const genDiff = () => {
 
-  // console.log(path.resolve('/fdsfsd/','fdsfffff','dddddddddd'));
-  const fullpath1 = getFullFilePath('struct1.json');
   
-  console.log(fullpath1);
+  const filePathBefore = getFullFilePath('struct1.json');  
+  const filePathAfter = getFullFilePath('struct2.json');
+
+  // console.log(`filePathBefore: ${filePathBefore}\nfilePathAfter: ${filePathAfter}\n`);
+
+  const rawObjectBefore = getJsonDataFromFile(filePathBefore);
+  const rawObjectAfter = getJsonDataFromFile(filePathAfter);
+
+  if (!rawObjectBefore || !rawObjectAfter) {
+    console.log('Error reading file!');
+    return;
+  }
+
+  const objectBefore = normalizeObject(rawObjectBefore);
+  const objectAfter = normalizeObject(rawObjectAfter);
+
+  //-------------------------------------------
+
+  const keysBefore = Object.keys(objectBefore);
+  const keysAfter = Object.keys(objectAfter);
+
+  // console.log(keysBefore);
+  // console.log(keysAfter)
+
+   const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
+
+  //  console.log(allKeys + '\n')
+
+  const notChangedKeys = keysBefore.filter(item => keysAfter.includes(item));
+
+  const changedKeys = allKeys.filter(item => keysAfter.includes(item) && (keysBefore[item] !== keysAfter[item]));
+
+  const addedKeys = keysAfter.filter(item => !keysBefore.includes(item));
+  const deletedKeys = keysBefore.filter(item => !keysAfter.includes(item));
+
+  // console.log(`notChangedKeys: ${notChangedKeys} \nchangedKeys: ${changedKeys}\n\n`);
+
+    // console.log(allKeys)
+     console.log(changedKeys)
+    //  console.log(deletedKeys);
+
+  console.log('{')
+  for (let item of notChangedKeys) {
+    console.log(`   ${item}: ${objectBefore[item]}`)
+  };
+
+  for (let item of changedKeys) {
+    console.log(` + ${item}: ${objectAfter[item]}`)
+    console.log(` - ${item}: ${objectBefore[item]}`)
+  };
+
+  for (let item of deletedKeys) {
+    console.log(` -  ${item}: ${objectBefore[item]}`)
+  };
+
+  for (let item of addedKeys) {
+    console.log(` -  ${item}: ${objectAfter[item]}`)
+  };
+
+  console.log('}')
 
 
-  const fullpath2 = getFullFilePath('struct2.json');
-  
-  console.log(getJsonDataFromFile(fullpath1));
 
-
-
-
-  return
-  // Нормализуем объект - приводим последующие строки к но
-  const keys1 = Object.keys(object1);
-  const keys2 = Object.keys(object2);
-
-  const allKeys = [...keys1, ...keys2].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
-
-  const sameKeys = keys1.filter(item => object1[item] === object2[item]);
-  const changedKeys = allKeys.filter(item => !sameKeys.includes(item))
-
-  console.log(`sameKeys: ${sameKeys} \nchangedKeys: ${changedKeys}`)
 }
 
 genDiff()
