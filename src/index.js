@@ -65,22 +65,41 @@ const genDiff = (pathToFile1, pathToFile2) => {
   //  output block
   let resultValue = '{';
 
-  for (let item of notChangedKeys) {
-    resultValue +=`\n    ${item}: ${objectBefore[item]}`;
-  };
+  for (let i = 0; i < notChangedKeys.length; i += 1) {
+    const item = notChangedKeys[i];
+    resultValue += `\n    ${item}: ${objectBefore[item]}`;
+  }
+  // for (let item of notChangedKeys) {
+  //   resultValue +=`\n    ${item}: ${objectBefore[item]}`;
+  // };
 
-  for (let item of changedKeys) {
+  for (let i = 0; i < changedKeys.length; i += 1) {
+    const item = changedKeys[i];
+
     resultValue += `\n  - ${item}: ${objectBefore[item]}`;
     resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  };
+  }
+  // for (let item of changedKeys) {
+  //   resultValue += `\n  - ${item}: ${objectBefore[item]}`;
+  //   resultValue += `\n  + ${item}: ${objectAfter[item]}`;
+  // };
 
-  for (let item of deletedKeys) {
+  for (let i = 0; i < deletedKeys.length; i += 1) {
+    const item = deletedKeys[i];
     resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-  };
+  }
 
-  for (let item of addedKeys) {
+  // for (let item of deletedKeys) {
+  //   resultValue += `\n  - ${item}: ${objectBefore[item]}`;
+  // };
+
+  for (let i = 0; i < addedKeys.length; i += 1) {
+    const item = addedKeys[i];
     resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  };
+  }
+  // for (let item of addedKeys) {
+  //   resultValue += `\n  + ${item}: ${objectAfter[item]}`;
+  // };
 
   resultValue += '\n}';
 
