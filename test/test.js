@@ -37,8 +37,6 @@ const genDiff = () => {
   const filePathBefore = getFullFilePath('struct1.json');  
   const filePathAfter = getFullFilePath('struct2.json');
 
-  // console.log(`filePathBefore: ${filePathBefore}\nfilePathAfter: ${filePathAfter}\n`);
-
   const rawObjectBefore = getJsonDataFromFile(filePathBefore);
   const rawObjectAfter = getJsonDataFromFile(filePathAfter);
 
@@ -55,48 +53,39 @@ const genDiff = () => {
   const keysBefore = Object.keys(objectBefore);
   const keysAfter = Object.keys(objectAfter);
 
-  // console.log(keysBefore);
-  // console.log(keysAfter)
-
-   const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
-
-  //  console.log(allKeys + '\n')
-
-  const notChangedKeys = keysBefore.filter(item => keysAfter.includes(item));
-
-  const changedKeys = allKeys.filter(item => keysAfter.includes(item) && (keysBefore[item] !== keysAfter[item]));
+  const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
 
   const addedKeys = keysAfter.filter(item => !keysBefore.includes(item));
   const deletedKeys = keysBefore.filter(item => !keysAfter.includes(item));
+  const changedKeys = allKeys.filter(item => keysAfter.includes(item) && keysBefore.includes(item) && (objectBefore[item] !== objectAfter[item]));
 
-  // console.log(`notChangedKeys: ${notChangedKeys} \nchangedKeys: ${changedKeys}\n\n`);
+  const notChangedKeys = keysBefore.filter(item => !changedKeys.includes(item) && !deletedKeys.includes(item));
 
-    // console.log(allKeys)
-     console.log(changedKeys)
-    //  console.log(deletedKeys);
+  //  console.log(`notChangedKeys: ${notChangedKeys} \nchangedKeys: ${changedKeys}\n\n`);
 
-  console.log('{')
+
+  let resultValue = '{';
+
   for (let item of notChangedKeys) {
-    console.log(`   ${item}: ${objectBefore[item]}`)
+    resultValue +=`\n    ${item}: ${objectBefore[item]}`;
   };
 
   for (let item of changedKeys) {
-    console.log(` + ${item}: ${objectAfter[item]}`)
-    console.log(` - ${item}: ${objectBefore[item]}`)
+    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
+    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
   };
 
   for (let item of deletedKeys) {
-    console.log(` -  ${item}: ${objectBefore[item]}`)
+    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
   };
 
   for (let item of addedKeys) {
-    console.log(` -  ${item}: ${objectAfter[item]}`)
+    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
   };
 
-  console.log('}')
+  resultValue += '\n}';
 
-
-
+  console.log(resultValue)
 }
 
 genDiff()

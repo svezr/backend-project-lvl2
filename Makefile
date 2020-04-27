@@ -7,4 +7,4 @@ install:
 lint:
 	npx eslint .
 run:
-	node ./bin/gendiff.js testfile1.json testfil2.json
+	node ./bin/gendiff.js struct1.json struct2.json
