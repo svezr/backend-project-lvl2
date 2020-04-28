@@ -1,10 +1,10 @@
-start:
-	node bin/gendiff.js
 help:
-	node bin/gendiff.js -h
+	node src/bin/gendiff.js -h
 install:
 	npm install
 lint:
 	npx eslint .
 run:
-	node ./bin/gendiff.js struct1.json struct2.json
+	node src/bin/gendiff.js struct1.json struct2.json
+build:
+	npm run-script build
