@@ -5,6 +5,6 @@ install:
 lint:
 	npx eslint .
 run:
-	node src/bin/gendiff.js struct1.json struct2.json
+	node src/bin/gendiff.js fixtures/struct1.json fixtures/struct2.json
 build:
 	npm run-script build
