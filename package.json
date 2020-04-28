@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/svezr/backend-project-lvl2#readme",
   "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
     "commander": "^5.0.0"
   },
   "dependencies": {
