@@ -17,7 +17,7 @@ const getJsonDataFromFile = (filePath) => {
   let returnValue;
 
   try {
-    returnValue = JSON.parse(readFileSync(filePath), 'ut');
+    returnValue = JSON.parse(readFileSync(filePath), 'utf8');
   } catch (e) {
     console.log(e.message);
   }
@@ -44,19 +44,19 @@ const genDiff = (pathToFile1, pathToFile2) => {
   const objectBefore = normalizeObject(rawObjectBefore);
   const objectAfter = normalizeObject(rawObjectAfter);
 
-  //-------------------------------------------
-
   const keysBefore = Object.keys(objectBefore);
   const keysAfter = Object.keys(objectAfter);
 
-  const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
+  const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => (
+    acc.includes(item) ? acc : [...acc, item]), []);
 
-   const addedKeys = keysAfter.filter((item) => !keysBefore.includes(item));
-   const deletedKeys = keysBefore.filter((item) => !keysAfter.includes(item));
-   const changedKeys = allKeys.filter((item) => keysAfter.includes(item) && keysBefore.includes(item) && (objectBefore[item] !== objectAfter[item]));
+  const addedKeys = keysAfter.filter((item) => !keysBefore.includes(item));
+  const deletedKeys = keysBefore.filter((item) => !keysAfter.includes(item));
+  const changedKeys = allKeys.filter((item) => (keysAfter.includes(item)
+          && keysBefore.includes(item) && (objectBefore[item] !== objectAfter[item])));
 
-  const notChangedKeys = keysBefore.filter((item) => !changedKeys.includes(item) && !deletedKeys.includes(item));
-
+  const notChangedKeys = keysBefore.filter((item) => (!changedKeys.includes(item)
+          && !deletedKeys.includes(item)));
 
   //  output block
   let resultValue = '{';
