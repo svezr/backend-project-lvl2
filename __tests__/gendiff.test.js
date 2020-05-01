@@ -5,3 +5,8 @@ test('reverse', () => {
 
   expect((true)).toEqual(true);
 });
+
+
+test('описалово', () => {
+  expect()
+})

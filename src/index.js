@@ -29,9 +29,6 @@ const getFullFilePath = (fileName) => {
   return path.isAbsolute(fileName) ? fileName : path.resolve(process.cwd(), fileName);
 };
 
-
-
-
 const genDiff = (pathToFile1, pathToFile2) => {
   const filePathBefore = getFullFilePath(pathToFile1);
   const filePathAfter = getFullFilePath(pathToFile2);
@@ -54,13 +51,12 @@ const genDiff = (pathToFile1, pathToFile2) => {
 
   const allKeys = [...keysBefore, ...keysAfter].reduce((acc, item) => acc.includes(item) ? acc : [...acc, item], []);
 
-  const addedKeys = keysAfter.filter((item) => !keysBefore.includes(item));
-  const deletedKeys = keysBefore.filter((item) => !keysAfter.includes(item));
-  const changedKeys = allKeys.filter((item) => keysAfter.includes(item) && keysBefore.includes(item) && (objectBefore[item] !== objectAfter[item]));
+   const addedKeys = keysAfter.filter((item) => !keysBefore.includes(item));
+   const deletedKeys = keysBefore.filter((item) => !keysAfter.includes(item));
+   const changedKeys = allKeys.filter((item) => keysAfter.includes(item) && keysBefore.includes(item) && (objectBefore[item] !== objectAfter[item]));
 
   const notChangedKeys = keysBefore.filter((item) => !changedKeys.includes(item) && !deletedKeys.includes(item));
 
-  //  console.log(`notChangedKeys: ${notChangedKeys} \nchangedKeys: ${changedKeys}\n\n`);
 
   //  output block
   let resultValue = '{';
