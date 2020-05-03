@@ -6,12 +6,14 @@ const normalizeObject = (obj) => {
   const entries = Object.entries(obj);
 
   const fn = (acc, item) => {
-    acc[item[0]] = item[1];
+    const [objectKey, objectValue] = item;
+
+    acc[objectKey] = objectValue;
     return acc;
   };
 
   return entries.reduce(fn, {});
-}
+};
 
 const getJsonDataFromFile = (filePath) => {
   let returnValue;
@@ -25,9 +27,8 @@ const getJsonDataFromFile = (filePath) => {
   return returnValue;
 };
 
-const getFullFilePath = (fileName) => {
-  return path.isAbsolute(fileName) ? fileName : path.resolve(process.cwd(), fileName);
-};
+const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
+  ? fileName : path.resolve(process.cwd(), fileName));
 
 const genDiff = (pathToFile1, pathToFile2) => {
   const filePathBefore = getFullFilePath(pathToFile1);

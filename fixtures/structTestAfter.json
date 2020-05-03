@@ -1,0 +1,6 @@
+{
+  "beforeValue": "beforeValue",
+  "beforeValue2": "beforeValue2Changed",
+  "valueString": "value1",
+  "valueNumber": 22
+}

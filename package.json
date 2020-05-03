@@ -9,7 +9,6 @@
   "files": [
     "dist"
   ],
-
   "scripts": {
     "test": "jest",
     "build": "cross-env NODE_ENV=production babel src --out-dir dist --source-maps inline",
@@ -43,6 +42,7 @@
     "jest": "^25.5.2"
   },
   "dependencies": {
+    "@jest/globals": "^25.5.2",
     "commander": "^5.0.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
