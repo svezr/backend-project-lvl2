@@ -58,27 +58,13 @@ const genDiff = (pathToFile1, pathToFile2) => {
 
   let resultValue = '{';
 
-  for (let i = 0; i < notChangedKeys.length; i += 1) {
-    const item = notChangedKeys[i];
-    resultValue += `\n    ${item}: ${objectBefore[item]}`;
-  }
+  resultValue += notChangedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}`, resultValue);
 
-  for (let i = 0; i < changedKeys.length; i += 1) {
-    const item = changedKeys[i];
+  resultValue += changedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, resultValue);
 
-    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  }
+  resultValue += deletedKeys.reduce((acc, item) => `${acc}\n  - ${item}: ${objectBefore[item]}`, resultValue);
 
-  for (let i = 0; i < deletedKeys.length; i += 1) {
-    const item = deletedKeys[i];
-    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-  }
-
-  for (let i = 0; i < addedKeys.length; i += 1) {
-    const item = addedKeys[i];
-    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  }
+  resultValue += addedKeys.reduce((acc, item) => `${acc}\n  + ${item}: ${objectAfter[item]}`, resultValue);
 
   resultValue += '\n}';
 
