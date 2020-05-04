@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import ini from 'ini';
 import path from 'path';
 import { readFileSync } from 'fs';
 import process from 'process';
@@ -12,8 +13,7 @@ const getParser = (filePath) => {
     case '.yml':
       return yaml.safeLoad;
     case '.ini':
-      // return ini.parse
-      break;
+      return ini.parse;
     default:
       return undefined;
   }
@@ -26,7 +26,7 @@ const getObjectFromFile = (filePath) => {
   let returnValue;
 
   try {
-    const fileData = readFileSync(getFullFilePath(filePath));
+    const fileData = readFileSync(getFullFilePath(filePath), 'utf8');
     const parseData = getParser(filePath);
 
     if (!parseData) {

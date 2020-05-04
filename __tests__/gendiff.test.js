@@ -1,7 +1,7 @@
-import path from 'path';
 import { expect } from '@jest/globals';
-import genDiff from '../src';
+import path from 'path';
 
+import genDiff from '../src';
 
 const getFixturesDirectoryPath = () => {
   const delimiter = path.sep;
@@ -12,122 +12,93 @@ const getFixturesDirectoryPath = () => {
 
 const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath(), fileName);
 
+const testCorrectResults = {
+  add: '{\n    beforeValue: beforeValue\n    beforeValue1: beforeValue1\n    beforeValue2: beforeValue2\n  + valueNumber: 22\n  + valueString: value1\n}',
+  remove: '{\n    beforeValue: beforeValue\n    beforeValue1: beforeValue1\n  - beforeValue2: beforeValue2\n}',
+  change: '{\n  - beforeValue: beforeValue\n  + beforeValue: beforeValueChanged\n  - beforeValue1: beforeValue1\n  + beforeValue1: beforeValue1Changed\n  - beforeValue2: beforeValue2\n  + beforeValue2: beforeValue2Changed\n}',
+  combo: '{\n    beforeValue: beforeValue\n  - beforeValue2: beforeValue2\n  + beforeValue2: beforeValue2Changed\n  - beforeValue1: beforeValue1\n  + valueNumber: 22\n  + valueString: value1\n}',
+};
+
 test('JSON: add values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAddAfter.json');
 
-  const testAddResult = `{
-    beforeValue: beforeValue
-    beforeValue1: beforeValue1
-    beforeValue2: beforeValue2
-  + valueNumber: 22
-  + valueString: value1
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testAddResult);
+  expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testCorrectResults.add);
 });
 
 test('JSON: remove values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.json');
 
-  const testRemoveResult = `{
-    beforeValue: beforeValue
-    beforeValue1: beforeValue1
-  - beforeValue2: beforeValue2
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileRemoveTest)).toBe(testRemoveResult);
+  expect(genDiff(pathFileBefore, pathFileRemoveTest)).toBe(testCorrectResults.remove);
 });
 
 test('JSON: change values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileChangeTest = getFixtureFilePath('structChangeAfter.json');
 
-  const testChangeResult = `{
-  - beforeValue: beforeValue
-  + beforeValue: beforeValueChanged
-  - beforeValue1: beforeValue1
-  + beforeValue1: beforeValue1Changed
-  - beforeValue2: beforeValue2
-  + beforeValue2: beforeValue2Changed
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileChangeTest)).toBe(testChangeResult);
+  expect(genDiff(pathFileBefore, pathFileChangeTest)).toBe(testCorrectResults.change);
 });
 
 test('JSON: add, remove and change values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileComboTest = getFixtureFilePath('structTestAfter.json');
 
-  const testComboResult = `{
-    beforeValue: beforeValue
-  - beforeValue2: beforeValue2
-  + beforeValue2: beforeValue2Changed
-  - beforeValue1: beforeValue1
-  + valueNumber: 22
-  + valueString: value1
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileComboTest)).toBe(testComboResult);
+  expect(genDiff(pathFileBefore, pathFileComboTest)).toBe(testCorrectResults.combo);
 });
 
 test('YAML: add values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.yml');
   const pathFileAddTest = getFixtureFilePath('structAddAfter.yml');
 
-  const testAddResult = `{
-    beforeValue: beforeValue
-    beforeValue1: beforeValue1
-    beforeValue2: beforeValue2
-  + valueNumber: 22
-  + valueString: value1
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testAddResult);
+  expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testCorrectResults.add);
 });
 
 test('YAML: remove values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.yml');
   const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.yml');
 
-  const testRemoveResult = `{
-    beforeValue: beforeValue
-    beforeValue1: beforeValue1
-  - beforeValue2: beforeValue2
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileRemoveTest)).toBe(testRemoveResult);
+  expect(genDiff(pathFileBefore, pathFileRemoveTest)).toBe(testCorrectResults.remove);
 });
 
 test('YAML: change values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.yml');
   const pathFileChangeTest = getFixtureFilePath('structChangeAfter.yml');
 
-  const testChangeResult = `{
-  - beforeValue: beforeValue
-  + beforeValue: beforeValueChanged
-  - beforeValue1: beforeValue1
-  + beforeValue1: beforeValue1Changed
-  - beforeValue2: beforeValue2
-  + beforeValue2: beforeValue2Changed
-}`;
-
-  expect(genDiff(pathFileBefore, pathFileChangeTest)).toBe(testChangeResult);
+  expect(genDiff(pathFileBefore, pathFileChangeTest)).toBe(testCorrectResults.change);
 });
 
 test('YAML: add, remove and change values', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.yml');
   const pathFileComboTest = getFixtureFilePath('structTestAfter.yml');
 
-  const testComboResult = `{
-    beforeValue: beforeValue
-  - beforeValue2: beforeValue2
-  + beforeValue2: beforeValue2Changed
-  - beforeValue1: beforeValue1
-  + valueNumber: 22
-  + valueString: value1
-}`;
+  expect(genDiff(pathFileBefore, pathFileComboTest)).toBe(testCorrectResults.combo);
+});
 
-  expect(genDiff(pathFileBefore, pathFileComboTest)).toBe(testComboResult);
+test('INI: add values', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.ini');
+  const pathFileAddTest = getFixtureFilePath('structAddAfter.ini');
+
+  expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testCorrectResults.add);
+});
+
+test('INI: remove values', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.ini');
+  const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.ini');
+
+  expect(genDiff(pathFileBefore, pathFileRemoveTest)).toBe(testCorrectResults.remove);
+});
+
+test('INI: change values', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.ini');
+  const pathFileChangeTest = getFixtureFilePath('structChangeAfter.ini');
+
+  expect(genDiff(pathFileBefore, pathFileChangeTest)).toBe(testCorrectResults.change);
+});
+
+test('INI: add, remove and change values', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.ini');
+  const pathFileComboTest = getFixtureFilePath('structTestAfter.ini');
+
+  expect(genDiff(pathFileBefore, pathFileComboTest)).toBe(testCorrectResults.combo);
 });
