@@ -33,33 +33,15 @@ const getJsonDataFromFile = (filePath) => {
 
 const getCompiledAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
   deletedKeys, addedKeys) => {
-  let resultValue = '{';
+  const valuesNotChanged = notChangedKeys.reduce((prev, item) => `${prev}\n    ${item}: ${objectBefore[item]}`, '');
 
-  for (let i = 0; i < notChangedKeys.length; i += 1) {
-    const item = notChangedKeys[i];
-    resultValue += `\n    ${item}: ${objectBefore[item]}`;
-  }
+  const valuesChanged = changedKeys.reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, '');
 
-  for (let i = 0; i < changedKeys.length; i += 1) {
-    const item = changedKeys[i];
+  const valuesDeleted = deletedKeys.reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}`, '');
 
-    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  }
+  const valuesAdded = addedKeys.reduce((prev, item) => `${prev}\n  + ${item}: ${objectAfter[item]}`, '');
 
-  for (let i = 0; i < deletedKeys.length; i += 1) {
-    const item = deletedKeys[i];
-    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-  }
-
-  for (let i = 0; i < addedKeys.length; i += 1) {
-    const item = addedKeys[i];
-    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  }
-
-  resultValue += '\n}';
-
-  return resultValue;
+  return `{${valuesNotChanged}${valuesChanged}${valuesDeleted}${valuesAdded}\n}`;
 };
 
 const genDiff = (filename1, filename2) => {
