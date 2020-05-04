@@ -14,7 +14,7 @@ const pathFileBefore = () => path.resolve(getFixturesDirectoryPath(), 'structBef
 const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath(), fileName);
 
 test('Add values', () => {
-  const pathFileAfter = getFixtureFilePath('structAddAfter.json');
+  const pathFileAddTest = getFixtureFilePath('structAddAfter.json');
 
   const testResult = `{
     beforeValue: beforeValue
@@ -24,11 +24,11 @@ test('Add values', () => {
   + valueNumber: 22
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileAfter)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileAddTest)).toBe(testResult);
 });
 
 test('Remove values', () => {
-  const pathFileAfter = getFixtureFilePath('structRemoveAfter.json');
+  const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.json');
 
   const testResult = `{
     beforeValue: beforeValue
@@ -36,11 +36,11 @@ test('Remove values', () => {
   - beforeValue2: beforeValue2
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileAfter)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileRemoveTest)).toBe(testResult);
 });
 
 test('Change values', () => {
-  const pathFileAfter = getFixtureFilePath('structChangeAfter.json');
+  const pathFileChangeTest = getFixtureFilePath('structChangeAfter.json');
 
   const testResult = `{
   - beforeValue: beforeValue
@@ -51,11 +51,11 @@ test('Change values', () => {
   + beforeValue2: beforeValue2Changed
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileAfter)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileChangeTest)).toBe(testResult);
 });
 
 test('Add, remove and change values', () => {
-  const pathFileAfter = getFixtureFilePath('structTestAfter.json');
+  const pathFileComboTest = getFixtureFilePath('structTestAfter.json');
 
   const testResult = `{
     beforeValue: beforeValue
@@ -66,5 +66,5 @@ test('Add, remove and change values', () => {
   + valueNumber: 22
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileAfter)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileComboTest)).toBe(testResult);
 });
