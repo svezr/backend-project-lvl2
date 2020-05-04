@@ -1,7 +1,4 @@
-import process from 'process';
-import path from 'path';
-import { readFileSync } from 'fs';
-import yaml from 'js-yaml';
+import getObjectFromFile from './parsers';
 
 const normalizeObject = (obj) => {
   const entries = Object.entries(obj);
@@ -14,44 +11,6 @@ const normalizeObject = (obj) => {
   };
 
   return entries.reduce(fn, {});
-};
-
-const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
-  ? fileName : path.resolve(process.cwd(), fileName));
-
-const getParser = (filePath) => {
-  const format = path.extname(filePath);
-
-  switch (format.toLowerCase()) {
-    case '.json':
-      return JSON.parse;
-    case '.yml':
-      return yaml.safeLoad;
-    case '.ini':
-      // return ini.parse
-      break;
-    default:
-      return undefined;
-  }
-};
-
-const getObjectFromFile = (filePath) => {
-  let returnValue;
-
-  try {
-    const fileData = readFileSync(getFullFilePath(filePath));
-    const parseData = getParser(filePath);
-
-    if (!parseData) {
-      throw new Error('Unknown extension!');
-    }
-
-    returnValue = parseData(fileData);
-  } catch (e) {
-    console.log(e.message);
-  }
-
-  return returnValue;
 };
 
 const getCompiledAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
