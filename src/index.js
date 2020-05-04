@@ -31,11 +31,8 @@ const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
   ? fileName : path.resolve(process.cwd(), fileName));
 
 const genDiff = (pathToFile1, pathToFile2) => {
-  const filePathBefore = getFullFilePath(pathToFile1);
-  const filePathAfter = getFullFilePath(pathToFile2);
-
-  const rawObjectBefore = getJsonDataFromFile(filePathBefore);
-  const rawObjectAfter = getJsonDataFromFile(filePathAfter);
+  const rawObjectBefore = getJsonDataFromFile(getFullFilePath(pathToFile1));
+  const rawObjectAfter = getJsonDataFromFile(getFullFilePath(pathToFile2));
 
   if (!rawObjectBefore || !rawObjectAfter) {
     console.log('Error reading file!');
@@ -59,16 +56,12 @@ const genDiff = (pathToFile1, pathToFile2) => {
   const notChangedKeys = keysBefore.filter((item) => (!changedKeys.includes(item)
           && !deletedKeys.includes(item)));
 
-  //  output block
   let resultValue = '{';
 
   for (let i = 0; i < notChangedKeys.length; i += 1) {
     const item = notChangedKeys[i];
     resultValue += `\n    ${item}: ${objectBefore[item]}`;
   }
-  // for (let item of notChangedKeys) {
-  //   resultValue +=`\n    ${item}: ${objectBefore[item]}`;
-  // };
 
   for (let i = 0; i < changedKeys.length; i += 1) {
     const item = changedKeys[i];
@@ -76,27 +69,16 @@ const genDiff = (pathToFile1, pathToFile2) => {
     resultValue += `\n  - ${item}: ${objectBefore[item]}`;
     resultValue += `\n  + ${item}: ${objectAfter[item]}`;
   }
-  // for (let item of changedKeys) {
-  //   resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-  //   resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  // };
 
   for (let i = 0; i < deletedKeys.length; i += 1) {
     const item = deletedKeys[i];
     resultValue += `\n  - ${item}: ${objectBefore[item]}`;
   }
 
-  // for (let item of deletedKeys) {
-  //   resultValue += `\n  - ${item}: ${objectBefore[item]}`;
-  // };
-
   for (let i = 0; i < addedKeys.length; i += 1) {
     const item = addedKeys[i];
     resultValue += `\n  + ${item}: ${objectAfter[item]}`;
   }
-  // for (let item of addedKeys) {
-  //   resultValue += `\n  + ${item}: ${objectAfter[item]}`;
-  // };
 
   resultValue += '\n}';
 
