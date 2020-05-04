@@ -15,11 +15,14 @@ const normalizeObject = (obj) => {
   return entries.reduce(fn, {});
 };
 
+const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
+  ? fileName : path.resolve(process.cwd(), fileName));
+
 const getJsonDataFromFile = (filePath) => {
   let returnValue;
 
   try {
-    returnValue = JSON.parse(readFileSync(filePath), 'utf8');
+    returnValue = JSON.parse(readFileSync(getFullFilePath(filePath)), 'utf8');
   } catch (e) {
     console.log(e.message);
   }
@@ -27,12 +30,41 @@ const getJsonDataFromFile = (filePath) => {
   return returnValue;
 };
 
-const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
-  ? fileName : path.resolve(process.cwd(), fileName));
 
-const genDiff = (pathToFile1, pathToFile2) => {
-  const rawObjectBefore = getJsonDataFromFile(getFullFilePath(pathToFile1));
-  const rawObjectAfter = getJsonDataFromFile(getFullFilePath(pathToFile2));
+const getCompiledAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
+  deletedKeys, addedKeys) => {
+  let resultValue = '{';
+
+  for (let i = 0; i < notChangedKeys.length; i += 1) {
+    const item = notChangedKeys[i];
+    resultValue += `\n    ${item}: ${objectBefore[item]}`;
+  }
+
+  for (let i = 0; i < changedKeys.length; i += 1) {
+    const item = changedKeys[i];
+
+    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
+    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
+  }
+
+  for (let i = 0; i < deletedKeys.length; i += 1) {
+    const item = deletedKeys[i];
+    resultValue += `\n  - ${item}: ${objectBefore[item]}`;
+  }
+
+  for (let i = 0; i < addedKeys.length; i += 1) {
+    const item = addedKeys[i];
+    resultValue += `\n  + ${item}: ${objectAfter[item]}`;
+  }
+
+  resultValue += '\n}';
+
+  return resultValue;
+};
+
+const genDiff = (filename1, filename2) => {
+  const rawObjectBefore = getJsonDataFromFile(filename1);
+  const rawObjectAfter = getJsonDataFromFile(getFullFilePath(filename2));
 
   if (!rawObjectBefore || !rawObjectAfter) {
     console.log('Error reading file!');
@@ -56,16 +88,8 @@ const genDiff = (pathToFile1, pathToFile2) => {
   const notChangedKeys = keysBefore.filter((item) => (!changedKeys.includes(item)
           && !deletedKeys.includes(item)));
 
-  let resultValue = '{';
-
-  resultValue += notChangedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}`, resultValue);
-  resultValue += changedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, resultValue);
-  resultValue += deletedKeys.reduce((acc, item) => `${acc}\n  - ${item}: ${objectBefore[item]}`, resultValue);
-  resultValue += addedKeys.reduce((acc, item) => `${acc}\n  + ${item}: ${objectAfter[item]}`, resultValue);
-
-  resultValue += '\n}';
-
-  return resultValue;
+  return getCompiledAnswer(objectBefore, objectAfter, notChangedKeys, changedKeys,
+    deletedKeys, addedKeys);
 };
 
 export default genDiff;
