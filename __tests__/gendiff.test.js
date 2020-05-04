@@ -16,7 +16,7 @@ const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath()
 test('Add values', () => {
   const pathFileAddTest = getFixtureFilePath('structAddAfter.json');
 
-  const testResult = `{
+  const testAddResult = `{
     beforeValue: beforeValue
     beforeValue1: beforeValue1
     beforeValue2: beforeValue2
@@ -24,25 +24,25 @@ test('Add values', () => {
   + valueNumber: 22
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileAddTest)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileAddTest)).toBe(testAddResult);
 });
 
 test('Remove values', () => {
   const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.json');
 
-  const testResult = `{
+  const testRemoveResult = `{
     beforeValue: beforeValue
     beforeValue1: beforeValue1
   - beforeValue2: beforeValue2
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileRemoveTest)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileRemoveTest)).toBe(testRemoveResult);
 });
 
 test('Change values', () => {
   const pathFileChangeTest = getFixtureFilePath('structChangeAfter.json');
 
-  const testResult = `{
+  const testChangeResult = `{
   - beforeValue: beforeValue
   + beforeValue: beforeValueChanged
   - beforeValue1: beforeValue1
@@ -51,13 +51,13 @@ test('Change values', () => {
   + beforeValue2: beforeValue2Changed
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileChangeTest)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileChangeTest)).toBe(testChangeResult);
 });
 
 test('Add, remove and change values', () => {
   const pathFileComboTest = getFixtureFilePath('structTestAfter.json');
 
-  const testResult = `{
+  const testComboResult = `{
     beforeValue: beforeValue
   - beforeValue2: beforeValue2
   + beforeValue2: beforeValue2Changed
@@ -66,5 +66,5 @@ test('Add, remove and change values', () => {
   + valueNumber: 22
 }`;
 
-  expect(genDiff(pathFileBefore(), pathFileComboTest)).toBe(testResult);
+  expect(genDiff(pathFileBefore(), pathFileComboTest)).toBe(testComboResult);
 });
