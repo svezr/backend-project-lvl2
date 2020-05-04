@@ -13,21 +13,21 @@ const pathFileBefore = () => path.resolve(getFixturesDirectoryPath(), 'structBef
 
 const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath(), fileName);
 
-test('Add values', () => {
+test('JSON: add values', () => {
   const pathFileAddTest = getFixtureFilePath('structAddAfter.json');
 
   const testAddResult = `{
     beforeValue: beforeValue
     beforeValue1: beforeValue1
     beforeValue2: beforeValue2
-  + valueString: value1
   + valueNumber: 22
+  + valueString: value1
 }`;
 
   expect(genDiff(pathFileBefore(), pathFileAddTest)).toBe(testAddResult);
 });
 
-test('Remove values', () => {
+test('JSON: remove values', () => {
   const pathFileRemoveTest = getFixtureFilePath('structRemoveAfter.json');
 
   const testRemoveResult = `{
@@ -39,7 +39,7 @@ test('Remove values', () => {
   expect(genDiff(pathFileBefore(), pathFileRemoveTest)).toBe(testRemoveResult);
 });
 
-test('Change values', () => {
+test('JSON: change values', () => {
   const pathFileChangeTest = getFixtureFilePath('structChangeAfter.json');
 
   const testChangeResult = `{
@@ -54,7 +54,7 @@ test('Change values', () => {
   expect(genDiff(pathFileBefore(), pathFileChangeTest)).toBe(testChangeResult);
 });
 
-test('Add, remove and change values', () => {
+test('JSON: add, remove and change values', () => {
   const pathFileComboTest = getFixtureFilePath('structTestAfter.json');
 
   const testComboResult = `{
@@ -62,8 +62,8 @@ test('Add, remove and change values', () => {
   - beforeValue2: beforeValue2
   + beforeValue2: beforeValue2Changed
   - beforeValue1: beforeValue1
-  + valueString: value1
   + valueNumber: 22
+  + valueString: value1
 }`;
 
   expect(genDiff(pathFileBefore(), pathFileComboTest)).toBe(testComboResult);

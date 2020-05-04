@@ -1,6 +1,7 @@
 import process from 'process';
 import path from 'path';
 import { readFileSync } from 'fs';
+import yaml from 'js-yaml';
 
 const normalizeObject = (obj) => {
   const entries = Object.entries(obj);
@@ -18,11 +19,34 @@ const normalizeObject = (obj) => {
 const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
   ? fileName : path.resolve(process.cwd(), fileName));
 
-const getJsonDataFromFile = (filePath) => {
+const getParser = (filePath) => {
+  const format = path.extname(filePath);
+
+  switch (format.toLowerCase()) {
+    case '.json':
+      return JSON.parse;
+    case '.yml':
+      return yaml.safeLoad;
+    case '.ini':
+      // return ini.parse
+      break;
+    default:
+      return undefined;
+  }
+};
+
+const getObjectFromFile = (filePath) => {
   let returnValue;
 
   try {
-    returnValue = JSON.parse(readFileSync(getFullFilePath(filePath)), 'utf8');
+    const fileData = readFileSync(getFullFilePath(filePath));
+    const parseData = getParser(filePath);
+
+    if (!parseData) {
+      throw new Error('Unknown extension!');
+    }
+
+    returnValue = parseData(fileData);
   } catch (e) {
     console.log(e.message);
   }
@@ -30,23 +54,22 @@ const getJsonDataFromFile = (filePath) => {
   return returnValue;
 };
 
-
 const getCompiledAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
   deletedKeys, addedKeys) => {
-  const valuesNotChanged = notChangedKeys.reduce((prev, item) => `${prev}\n    ${item}: ${objectBefore[item]}`, '');
+  const valuesNotChanged = notChangedKeys.slice().sort().reduce((prev, item) => `${prev}\n    ${item}: ${objectBefore[item]}`, '');
 
-  const valuesChanged = changedKeys.reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, '');
+  const valuesChanged = changedKeys.slice().sort().reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, '');
 
-  const valuesDeleted = deletedKeys.reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}`, '');
+  const valuesDeleted = deletedKeys.slice().sort().reduce((prev, item) => `${prev}\n  - ${item}: ${objectBefore[item]}`, '');
 
-  const valuesAdded = addedKeys.reduce((prev, item) => `${prev}\n  + ${item}: ${objectAfter[item]}`, '');
+  const valuesAdded = addedKeys.slice().sort().reduce((prev, item) => `${prev}\n  + ${item}: ${objectAfter[item]}`, '');
 
   return `{${valuesNotChanged}${valuesChanged}${valuesDeleted}${valuesAdded}\n}`;
 };
 
 const genDiff = (filename1, filename2) => {
-  const rawObjectBefore = getJsonDataFromFile(filename1);
-  const rawObjectAfter = getJsonDataFromFile(getFullFilePath(filename2));
+  const rawObjectBefore = getObjectFromFile(filename1);
+  const rawObjectAfter = getObjectFromFile(filename2);
 
   if (!rawObjectBefore || !rawObjectAfter) {
     console.log('Error reading file!');
