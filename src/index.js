@@ -13,7 +13,7 @@ const normalizeObject = (obj) => {
   return entries.reduce(fn, {});
 };
 
-const getCompiledAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
+const buildAnswer = (objectBefore, objectAfter, notChangedKeys, changedKeys,
   deletedKeys, addedKeys) => {
   const valuesNotChanged = notChangedKeys.slice().sort().reduce((prev, item) => `${prev}\n    ${item}: ${objectBefore[item]}`, '');
 
@@ -52,7 +52,7 @@ const genDiff = (filename1, filename2) => {
   const notChangedKeys = keysBefore.filter((item) => (!changedKeys.includes(item)
           && !deletedKeys.includes(item)));
 
-  return getCompiledAnswer(objectBefore, objectAfter, notChangedKeys, changedKeys,
+  return buildAnswer(objectBefore, objectAfter, notChangedKeys, changedKeys,
     deletedKeys, addedKeys);
 };
 
