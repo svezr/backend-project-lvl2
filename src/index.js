@@ -59,11 +59,8 @@ const genDiff = (pathToFile1, pathToFile2) => {
   let resultValue = '{';
 
   resultValue += notChangedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}`, resultValue);
-
   resultValue += changedKeys.reduce((acc, item) => `${acc}\n    ${item}: ${objectBefore[item]}\n  + ${item}: ${objectAfter[item]}`, resultValue);
-
   resultValue += deletedKeys.reduce((acc, item) => `${acc}\n  - ${item}: ${objectBefore[item]}`, resultValue);
-
   resultValue += addedKeys.reduce((acc, item) => `${acc}\n  + ${item}: ${objectAfter[item]}`, resultValue);
 
   resultValue += '\n}';
