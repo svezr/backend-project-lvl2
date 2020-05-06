@@ -57,3 +57,70 @@ const genDiff = (filename1, filename2) => {
 };
 
 export default genDiff;
+
+//  todo: Вариант
+//  получаем список ключей объектаДо и объектаПосле в один массив
+//  пробегаемся итератором по массиву и ищем различия/равенство
+//  если натыкаемся на объект - итеративно вызываем себя
+
+// Односторонний обход объекта. Набросок:
+// const source = {
+//   a: 'aString',
+//   b: {
+//     ba: 'baString',
+//     bb: 'bbString',
+//     bc: 'bcString',
+//     bd: {
+//       bda: 'bdaString',
+//       bdb: 'bdbString',
+//       bdc: 'bdcString-',
+//     },
+//   },
+//   c: 'cString',
+// };
+
+// const after = {
+//   a: 'aString',
+//   b: {
+//     ba: 'baString2',
+//     bb: 'bbString',
+//     bc: 'bcString',
+//     bd: {
+//       bda: 'bdaString2',
+//       bdb: 'bdbString',
+//       bdc: '',
+//     },
+//   },
+//   c: 'cString2',
+// };
+
+
+
+// const diff = (objectBefore, objectAfter, margin = 1) => {
+
+//   let s = '\n' + ' '.repeat(margin) + '{';
+
+//   for (let key of Object.keys(objectAfter)) {
+//     if (typeof objectAfter[key] === 'string') {
+//       if (objectBefore[key] !== objectAfter[key]){
+//         s += '\n' + ' '.repeat(margin) + `  - ${key}: ${objectBefore[key]}`;
+//         s += '\n' + ' '.repeat(margin) + `  + ${key}: ${objectAfter[key]}`;
+
+//         continue;
+//       }
+//       s += '\n' + ' '.repeat(margin) + `  ${key}: ${objectBefore[key]}`;
+      
+//     }
+
+//     if (typeof objectAfter[key] === 'object') {
+//       s += diff(objectBefore[key], objectAfter[key], margin + 1)
+//     }
+//   }
+
+//   return s + '\n' + ' '.repeat(margin) + '}';
+
+// }
+
+// const result = diff(source, after);
+
+// console.log(result)
