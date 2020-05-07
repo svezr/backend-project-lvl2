@@ -58,85 +58,115 @@ const genDiff = (filename1, filename2) => {
 
 export default genDiff;
 
-//  todo: Вариант
-//  получаем список ключей объектаДо и объектаПосле в один массив
-//  пробегаемся итератором по массиву и ищем различия/равенство
-//  если натыкаемся на объект - итеративно вызываем себя
+// TODO: новый алгоритм
 
-// const before = {
+// // import _ from 'lodash';
+// const { _ } = require('lodash')
+
+// const beforeObject = {
 //   beforeValue: 'beforeValue',
+//    struct1: {a: 122, b: 43},
 //   beforeValue1: 'beforeValue1',
 //   beforeValue2: 'beforeValue2',
 //   valueString: 'value1',
-//   valueNumber: 22,
+//   valueNumber: {st: '1', a: 23},
 // };
 
-// const after = {
+// const afterObject = {
+//    struct1: {a: 122, z: 'fdsfsdf', l: {m:333}},  
 //   beforeValue: 'beforeValue',
 //   beforeValue2: 'beforeValue2Changed',
 //   valueString: 'value1',
-//   valueNumber: 23
 // };
 
-
-// Односторонний обход объекта. Набросок:
-// const source = {
-//   a: 'aString',
-//   b: {
-//     ba: 'baString',
-//     bb: 'bbString',
-//     bc: 'bcString',
-//     bd: {
-//       bda: 'bdaString',
-//       bdb: 'bdbString',
-//       bdc: 'bdcString-',
-//     },
-//   },
-//   c: 'cString',
-// };
-
-// const after = {
-//   a: 'aString',
-//   b: {
-//     ba: 'baString2',
-//     bb: 'bbString',
-//     bc: 'bcString',
-//     bd: {
-//       bda: 'bdaString2',
-//       bdb: 'bdbString',
-//       bdc: '',
-//     },
-//   },
-//   c: 'cString2',
-// };
-
-
-
-// const diff = (objectBefore, objectAfter, margin = 1) => {
-
-//   let s = '\n' + ' '.repeat(margin) + '{';
-
-//   for (let key of Object.keys(objectAfter)) {
-//     if (typeof objectAfter[key] === 'string') {
-//       if (objectBefore[key] !== objectAfter[key]){
-//         s += '\n' + ' '.repeat(margin) + `  - ${key}: ${objectBefore[key]}`;
-//         s += '\n' + ' '.repeat(margin) + `  + ${key}: ${objectAfter[key]}`;
-
-//         continue;
-//       }
-//       s += '\n' + ' '.repeat(margin) + `  ${key}: ${objectBefore[key]}`;
-      
-//     }
-
-//     if (typeof objectAfter[key] === 'object') {
-//       s += diff(objectBefore[key], objectAfter[key], margin + 1)
-//     }
+// const getPrintValue = (item, margin = 0) => {
+//   if (!_.isPlainObject(item)) {
+//     return item;
 //   }
 
-//   return s + '\n' + ' '.repeat(margin) + '}';
+//   let result = '{';
+//   let objectKeys = Object.keys(item);
 
+//   for (let key of objectKeys) {
+//     const keyValue = item[key];
+//     const value = _.isPlainObject(keyValue) ? getPrintValue(keyValue, margin) : keyValue;
+    
+//     result += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
+//   }
+  
+//   result += '\n' + ' '.repeat(margin) + '}';
+//   return result;
 // }
 
-// const result = diff(source, after);
+// const getTypeOfOperation = (beforeObject, afterObject, key) => {
+//   let operation = 'none';
 
-// console.log(result)
+//   if (!(_.has(beforeObject, key)) && _.has(afterObject, key)) {
+//     operation = 'add';
+//   }
+
+//   if (_.has(beforeObject, key) && !(_.has(afterObject, key))) {
+//     operation = 'remove';
+//   }
+    
+//   if ((_.has(beforeObject, key) && _.has(afterObject, key)) && !(_.isEqual(beforeObject[key], afterObject[key]))) {
+//     operation = 'change';
+//   };
+
+//   return operation;
+// };
+
+// const diff = (beforeObject, afterObject, margin = 0) => {
+//   let s =  '{';
+
+//   const outputPrefix = '\n' + ' '.repeat(margin);
+//   const keysBefore = Object.keys(beforeObject);
+//   const keysAfter = Object.keys(afterObject);
+
+//   const keys = _.uniq([...keysBefore, ...keysAfter]).sort();
+
+//   for (let key of keys) {
+//     const beforeItem = beforeObject[key];
+//     const afterItem = afterObject[key];
+
+//     const operation  = getTypeOfOperation(beforeObject, afterObject, key);
+//     const bothItemsAreObjects = _.isPlainObject(beforeItem) && _.isPlainObject(afterItem);
+    
+    
+
+//     s += outputPrefix;
+
+//     //  todo: добавить сюда переменную sign = ''; вынести шаблонную строкуВынести ее до case и добавлять в шаблонную стронку
+//     //  formatString = `   ${sign} ${key}`
+//     //  типа s += `${formatString} + getPrintValue
+
+//     switch (operation) {
+//       case 'none':
+//         s += `    ${key}: ` + getPrintValue(beforeItem, margin + 4);
+//         break;
+//       case 'add':
+//         s += `  + ${key}: ` + getPrintValue(afterItem, margin + 4);
+//         break;
+//       case 'remove':
+//         s += `  - ${key}: ` + getPrintValue(beforeItem, margin + 4);
+//         break;
+//       case 'change':
+//         if (bothItemsAreObjects) {
+//           s +=  `    ${key}: `  + diff(beforeItem, afterItem, margin+4);
+//         } else{
+//           s += `  - ${key}: ` + getPrintValue(beforeItem, margin + 4);
+//           s += outputPrefix + `  + ${key}: ` + getPrintValue(afterItem, margin + 4);
+//         }
+//         break;
+//     };
+
+//   }
+
+//   s += `${outputPrefix}}`;
+
+//   return s;
+// }
+
+
+// const result = diff(beforeObject, afterObject);
+//  console.log(result)
