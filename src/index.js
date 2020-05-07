@@ -63,6 +63,22 @@ export default genDiff;
 //  пробегаемся итератором по массиву и ищем различия/равенство
 //  если натыкаемся на объект - итеративно вызываем себя
 
+// const before = {
+//   beforeValue: 'beforeValue',
+//   beforeValue1: 'beforeValue1',
+//   beforeValue2: 'beforeValue2',
+//   valueString: 'value1',
+//   valueNumber: 22,
+// };
+
+// const after = {
+//   beforeValue: 'beforeValue',
+//   beforeValue2: 'beforeValue2Changed',
+//   valueString: 'value1',
+//   valueNumber: 23
+// };
+
+
 // Односторонний обход объекта. Набросок:
 // const source = {
 //   a: 'aString',
