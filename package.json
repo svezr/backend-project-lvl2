@@ -39,7 +39,8 @@
     "babel-jest": "^25.5.1",
     "commander": "^5.0.0",
     "cross-env": "^7.0.2",
-    "jest": "^25.5.2"
+    "jest": "^25.5.2",
+    "lodash": "^4.17.15"
   },
   "dependencies": {
     "@jest/globals": "^25.5.2",
