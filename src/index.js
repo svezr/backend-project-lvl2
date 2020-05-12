@@ -1,14 +1,14 @@
 //  собрать AST -> stylish(AST) -> stringValue
-
-import getObjectFromFile from './parsers';
 import _ from 'lodash';
+import getObjectFromFile from './parsers';
+
 
 
 
 const getDiff = (objectBefore, objectAfter) => {
-  const resultDiff = {};
+  const resultDiff = [];
 
-  resultDiff.children = [];
+  // const children = [];
   const keys = _.uniq([...Object.keys(objectBefore), ...Object.keys(objectAfter)]).sort();
 
   for (let i = 0; i < keys.length; i += 1) {
@@ -25,9 +25,46 @@ const getDiff = (objectBefore, objectAfter) => {
     if (bothValuesAreObjects) {
       const tmp = getDiff(valueBefore, valueAfter);
       // console.log(`!\t${tmp}`)
-      resultDiff.children.push(tmp);
+      // children.push(tmp);
       continue;
     }
+
+
+
+    // новая структура от корня:
+    // [
+    //   { 
+    //     name: 'a',
+    //     operation: 'add',
+    //     beforeValue: undefined, 
+    //     afterValue: 'fsdfds'
+    //   },
+    //   { 
+    //     name: 'b',
+    //     operation: 'remove',
+    //     beforeValue: 'fdsfds', 
+    //     afterValue: undefined
+    //   },
+    //   {
+    //     name: 'z',
+    //     children: [
+    //       {
+    //         name: 'za',
+    //         operation: 'none',
+    //         beforeValue,
+    //         afterValue
+    //       }
+    //     ]
+    //   }
+    // ]
+
+
+
+
+
+
+
+
 
     if (onlyOneOfValuesIsAnObject || (valueBefore !== valueAfter)) {
       operation = 'modify';
@@ -52,10 +89,11 @@ const getDiff = (objectBefore, objectAfter) => {
       valueAfter,
     };
 
-    resultDiff[key] = child;
+    resultDiff.push(child);
     // resultDiff.children.push(child);
   }
 
+  // resultDiff.children = children.slice().sort();
   // console.log(`!!!\t ${Object.values(resultDiff)[0]}\t${Object.values(resultDiff)[1]}`)
   return resultDiff;
 };
@@ -73,6 +111,39 @@ const normalizeObject = (obj) => {
   return entries.reduce(fn, {});
 };
 
+const getChildValue = (child) => {
+  if (child.operation === 'none') {
+    return child.valueBefore;
+  }
+
+  if (child.operation === 'add') {
+    return child.valueAfter;
+  }
+
+  if (child.operation === 'remove') {
+    return child.valueBefore;
+  };
+}
+
+const stylish = (diff, margin = 0) => {
+  // let resultValue = '{';
+
+  // const keys = Object.keys(diff).sort();
+
+  // for (let key of keys) {
+  //   const value = getChildValue(diff[key]);
+
+  //   resultValue += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
+
+  // }
+
+
+  // resultValue += '}';
+  console.log(diff)
+
+  // return resultValue;
+}
+
 const genDiff = (filename1, filename2) => {
 
   const rawObjectBefore = getObjectFromFile(filename1);
@@ -86,7 +157,13 @@ const genDiff = (filename1, filename2) => {
   const objectBefore = normalizeObject(rawObjectBefore);
   const objectAfter = normalizeObject(rawObjectAfter);
 
-  return getDiff(objectBefore, objectAfter);
+  const diff = getDiff(objectBefore, objectAfter);
+
+  const result = stylish(diff);
+
+  console.log(result)
+  return result;
+
 };
 
 export default genDiff;
