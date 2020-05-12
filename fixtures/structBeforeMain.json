@@ -1,0 +1,23 @@
+{
+  "beforeGroup1": {
+    "beforeGroup1Key": "beforeValue",
+    "beforeValue1Key": 100,
+    "beforeValue2Key": false,
+    "beforeValue3Key": {
+      "befureValue3Key1": "key1Value1",
+      "befureValue3Key2": "key2Value2"
+    }
+  },
+  "beforeGroup2": {
+    "beforeGroup2Key1": "value222",
+    "beforeGroup2Key2": 332
+  },
+  "beforeGroup3": {
+    "beforeGroup3Key1": "fd fd daf das fd fda",
+    "beforeGroup3Key2": 4324442
+  },
+  "beforeGroupDeleted": {
+    "beforeGroupDeletedKey1": "j3qq4h7h2v2hch4",
+    "beforeGroupDeletedKey2": 123
+  }  
+}

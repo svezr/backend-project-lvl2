@@ -1,105 +1,225 @@
+//  собрать AST -> stylish(AST) -> stringValue
+
 import getObjectFromFile from './parsers';
-import _ from 'lodash'
+import _ from 'lodash';
 
 
-const getPrintValue = (item, margin = 0) => {
-  if (!_.isPlainObject(item)) {
-    return item;
-  }
 
-  let result = '{';
-  const objectKeys = Object.keys(item);
+const getDiff = (objectBefore, objectAfter) => {
+  const resultDiff = {};
 
-  for (let key of objectKeys) {
-    const keyValue = item[key];
-    const value = _.isPlainObject(keyValue) ? getPrintValue(keyValue, margin) : keyValue;
-
-    result += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
-  }
-
-  result += '\n' + ' '.repeat(margin) + '}';
-  return result;
-};
-
-const getOperationType = (beforeObject, afterObject, key) => {
-  let operation = 'none';
-
-  const bothItemsAreObjects = _.isPlainObject(beforeItem) && _.isPlainObject(afterItem);
-
-  if (!(_.has(beforeObject, key)) && _.has(afterObject, key)) {
-    operation = 'add';
-  }
-
-  if (_.has(beforeObject, key) && !(_.has(afterObject, key))) {
-    operation = 'remove';
-  }
-
-  if ((_.has(beforeObject, key) && _.has(afterObject, key)) && !(_.isEqual(beforeObject[key], afterObject[key]))) {
-    operation = 'change';
-  };
-
-  if (operation === 'change') && bothItemsAreObjects {
-    operation = 'changeObjects';
-  }
-
-  return operation;
-};
-
-
-const diff = (beforeObject, afterObject, margin = 0) => {
-  let s =  '{';
-
-  const outputPrefix = '\n' + ' '.repeat(margin);
-
-  const keysBefore = Object.keys(beforeObject);
-  const keysAfter = Object.keys(afterObject);
-  const keys = _.uniq([...keysBefore, ...keysAfter]).sort();
-
-  const operationsPrefix = {
-    none: `${outputPrefix}    `,
-    add: `${outputPrefix}  + `,
-    remove: `${outputPrefix}  - `,
-    change: `${outputPrefix}  - `,
-    changedObjects: `${outputPrefix}    `,
-  };
-
-  
+  resultDiff.children = [];
+  const keys = _.uniq([...Object.keys(objectBefore), ...Object.keys(objectAfter)]).sort();
 
   for (let i = 0; i < keys.length; i += 1) {
-    const beforeItem = beforeObject[key];
-    const afterItem = afterObject[key];
-
     const key = keys[i];
-    const operation = getOperationType(beforeObject, afterObject, key);
-    const prefix = `${operationsPrefix[operation]}${key}: `;
+    let operation = 'none';
 
-    switch (operation) {
-      case 'none':
-        s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
-        break;
-      case 'add':
-        s += `${prefix}${getPrintValue(afterItem, margin + 4)}`;
-        break;
-      case 'remove':
-        s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
-        break
-      case 'change':
-        s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
-        s += `${prefix}${getPrintValue(afterItem, margin + 4)}`;
-        break;
-      case 'changeObjects':
-        s += `${prefix}${diff(beforeItem, afterItem, margin + 4)}`;
-        break;
+    const valueBefore = objectBefore[key];
+    const valueAfter = objectAfter[key];
+
+    const bothValuesExist = _.has(objectBefore,key) && _.has(objectAfter, key);
+    const bothValuesAreObjects = bothValuesExist && (_.isPlainObject(valueBefore) && _.isPlainObject(valueAfter));
+    const onlyOneOfValuesIsAnObject = !bothValuesAreObjects && (_.isPlainObject(objectBefore) || _.isPlainObject(objectAfter));
+
+    if (bothValuesAreObjects) {
+      const tmp = getDiff(valueBefore, valueAfter);
+      // console.log(`!\t${tmp}`)
+      resultDiff.children.push(tmp);
+      continue;
+    }
+
+    if (onlyOneOfValuesIsAnObject || (valueBefore !== valueAfter)) {
+      operation = 'modify';
+    }
+
+    if (valueBefore === valueAfter) {
+      operation = 'none';
+    }
+
+    if (_.has(objectBefore, key) && !_.has(objectAfter, key)) {
+      operation = 'remove';
+    }
+
+    if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
+      operation = 'add';
+    }
+
+    const child = {
+      operation,
+      key,
+      valueBefore,
+      valueAfter,
     };
+
+    resultDiff[key] = child;
+    // resultDiff.children.push(child);
   }
 
-  s += `${outputPrefix}}`;
+  // console.log(`!!!\t ${Object.values(resultDiff)[0]}\t${Object.values(resultDiff)[1]}`)
+  return resultDiff;
+};
 
-  return s;
-}
+const normalizeObject = (obj) => {
+  const entries = Object.entries(obj);
+
+  const fn = (acc, item) => {
+    const [objectKey, objectValue] = item;
+
+    acc[objectKey] = objectValue;
+    return acc;
+  };
+
+  return entries.reduce(fn, {});
+};
+
+const genDiff = (filename1, filename2) => {
+
+  const rawObjectBefore = getObjectFromFile(filename1);
+  const rawObjectAfter = getObjectFromFile(filename2);
+
+  if (!rawObjectBefore || !rawObjectAfter) {
+    console.log('Error reading file!');
+    return;
+  }
+
+  const objectBefore = normalizeObject(rawObjectBefore);
+  const objectAfter = normalizeObject(rawObjectAfter);
+
+  return getDiff(objectBefore, objectAfter);
+};
+
+export default genDiff;
 
 
+//  Рабочая версия, которую отметаем из-за того, что нужен отдельный объект-посредник ast и функция stylish, которая форматирует дифф
+// const getPrintValue = (item, margin = 0) => {
+//   if (!_.isPlainObject(item)) {
+//     return item;
+//   }
 
+//   let result = '{';
+//   const objectKeys = Object.keys(item);
+
+//   for (let key of objectKeys) {
+//     const keyValue = item[key];
+//     const value = _.isPlainObject(keyValue) ? getPrintValue(keyValue, margin) : keyValue;
+
+//     result += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
+//   }
+
+//   result += '\n' + ' '.repeat(margin) + '}';
+//   return result;
+// };
+
+// const getOperationType = (beforeObject, afterObject, key) => {
+//   let operation = 'none';
+
+//   const bothItemsAreObjects = _.isPlainObject(beforeItem) && _.isPlainObject(afterItem);
+
+//   if (!(_.has(beforeObject, key)) && _.has(afterObject, key)) {
+//     operation = 'add';
+//   }
+
+//   if (_.has(beforeObject, key) && !(_.has(afterObject, key))) {
+//     operation = 'remove';
+//   }
+
+//   if ((_.has(beforeObject, key) && _.has(afterObject, key))
+//     && !(_.isEqual(beforeObject[key], afterObject[key]))) {
+//     operation = 'change';
+//   };
+
+//   if ((operation === 'change') && bothItemsAreObjects) {
+//     operation = 'changeObjects';
+//   }
+
+//   return operation;
+// };
+
+// const diff = (beforeObject, afterObject, margin = 0) => {
+
+//   let s = '{';
+
+//   const outputPrefix = '\n' + ' '.repeat(margin);
+
+//   const keysBefore = Object.keys(beforeObject);
+//   const keysAfter = Object.keys(afterObject);
+//   const keys = _.uniq([...keysBefore, ...keysAfter]).sort();
+
+//   const operationsPrefix = {
+//     none: `${outputPrefix}    `,
+//     add: `${outputPrefix}  + `,
+//     remove: `${outputPrefix}  - `,
+//     change: `${outputPrefix}  - `,
+//     changedObjects: `${outputPrefix}    `,
+//   };
+
+//   for (let i = 0; i < keys.length; i += 1) {
+//     const key = keys[i];
+
+//     const beforeItem = beforeObject[key];
+//     const afterItem = afterObject[key];
+
+//     const operation = getOperationType(beforeObject, afterObject, key);
+//     const prefix = `${operationsPrefix[operation]}${key}: `;
+
+//     switch (operation) {
+//       case 'none':
+//         s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
+//         break;
+//       case 'add':
+//         s += `${prefix}${getPrintValue(afterItem, margin + 4)}`;
+//         break;
+//       case 'remove':
+//         s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
+//         break
+//       case 'change':
+//         s += `${prefix}${getPrintValue(beforeItem, margin + 4)}`;
+//         s += `${prefix}${getPrintValue(afterItem, margin + 4)}`;
+//         break;
+//       case 'changeObjects':
+//         s += `${prefix}${diff(beforeItem, afterItem, margin + 4)}`;
+//         break;
+//       default:
+//         break;
+//     }
+//   }
+
+//   s += `${outputPrefix}}`;
+
+//   return s;
+// };
+
+// const normalizeObject = (obj) => {
+//   const entries = Object.entries(obj);
+
+//   const fn = (acc, item) => {
+//     const [objectKey, objectValue] = item;
+
+//     acc[objectKey] = objectValue;
+//     return acc;
+//   };
+
+//   return entries.reduce(fn, {});
+// };
+
+// const genDiff = (filename1, filename2) => {
+
+//   const rawObjectBefore = getObjectFromFile(filename1);
+//   const rawObjectAfter = getObjectFromFile(filename2);
+
+//   if (!rawObjectBefore || !rawObjectAfter) {
+//     console.log('Error reading file!');
+//     return;
+//   }
+
+//   const objectBefore = normalizeObject(rawObjectBefore);
+//   const objectAfter = normalizeObject(rawObjectAfter);
+
+//   return diff(objectBefore, objectAfter);
+// };
+//////////////////////////////////////////////////
 // const normalizeObject = (obj) => {
 //   const entries = Object.entries(obj);
 
@@ -156,7 +276,7 @@ const diff = (beforeObject, afterObject, margin = 0) => {
 //     deletedKeys, addedKeys);
 // };
 
-export default genDiff;
+
 
 
 // TODO: новый алгоритм

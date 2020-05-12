@@ -2,6 +2,10 @@
   "beforeValue": "beforeValue",
   "beforeValue1": "beforeValue1",
   "beforeValue2": "beforeValue2",
+  "beforeValue3": {
+    "befureValue3Key1": "key1Value1",
+    "befureValue3Key2": "key2Value2"
+  }
   "valueString": "value1",
   "valueNumber": 22
 }
