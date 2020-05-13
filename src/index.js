@@ -29,43 +29,6 @@ const getDiff = (objectBefore, objectAfter) => {
       continue;
     }
 
-
-
-    // новая структура от корня:
-    // [
-    //   { 
-    //     name: 'a',
-    //     operation: 'add',
-    //     beforeValue: undefined, 
-    //     afterValue: 'fsdfds'
-    //   },
-    //   { 
-    //     name: 'b',
-    //     operation: 'remove',
-    //     beforeValue: 'fdsfds', 
-    //     afterValue: undefined
-    //   },
-    //   {
-    //     name: 'z',
-    //     children: [
-    //       {
-    //         name: 'za',
-    //         operation: 'none',
-    //         beforeValue,
-    //         afterValue
-    //       }
-    //     ]
-    //   }
-    // ]
-
-
-
-
-
-
-
-
-
     if (onlyOneOfValuesIsAnObject || (valueBefore !== valueAfter)) {
       operation = 'modify';
     }
@@ -167,6 +130,181 @@ const genDiff = (filename1, filename2) => {
 };
 
 export default genDiff;
+
+//новый код!!!
+
+
+// const _ = require('lodash')
+//     // новая структура от корня:
+//     // [
+//     //   { 
+//     //     name: 'a',
+//     //     operation: 'add',
+//     //     beforeValue: undefined, 
+//     //     afterValue: 'fsdfds'
+//     //   },
+//     //   { 
+//     //     name: 'b',
+//     //     operation: 'remove',
+//     //     beforeValue: 'fdsfds', 
+//     //     afterValue: undefined
+//     //   },
+//     //   {
+//     //     name: 'z',
+//     //     children: [
+//     //       {
+//     //         name: 'za',
+//     //         operation: 'none',
+//     //         beforeValue,
+//     //         afterValue
+//     //       }
+//     //     ]
+//     //   }
+//     // ]
+
+// objectBefore = {
+//   beforeValue: "beforeValue",
+//   beforeValue1: "beforeValue1",
+//   beforeValue2: "beforeValue2",
+//   struct1: {
+//     a: 1
+//   },
+//   structEqual: {
+//     a: "a",
+//     b: "b"
+//   }
+// };
+
+// objectAfter = {
+//   beforeValue: "beforeValue",
+//   beforeValue2: "beforeValue2Changed",
+//   beforeValue3: "bevoreValue3Added",
+//   struct1: {
+//     a: 1,
+//     b: "FDFSD",
+//     c: {
+//       c1: 12
+//     }
+//   },
+//   structEqual: {
+//     a: "a",
+//     b: "b"
+//   }  
+// };
+
+// ////////////////////////////////////////////////////
+
+// const getChildValue = (child) => {
+//   if (child.operation === 'none') {
+//     return child.valueBefore;
+//   }
+
+//   if (child.operation === 'add') {
+//     return child.valueAfter;
+//   }
+
+//   if (child.operation === 'remove') {
+//     return child.valueBefore;
+//   };
+// }
+
+// //const getChildren
+
+// const createChild = (key, objectBefore, objectAfter) => {
+//   const valueBefore = objectBefore[key];
+//   const valueAfter = objectAfter[key];  
+
+
+
+//   const valueNotChanged = _.isEqual(valueBefore, valueAfter);
+
+//   console.log(key, valueBefore, valueAfter)
+//   console.log(valueNotChanged)
+
+
+
+//   const bothValuesExist = _.has(objectBefore,key) && _.has(objectAfter, key);
+
+//   const bothValuesAreObjects = bothValuesExist && (_.isPlainObject(valueBefore) && _.isPlainObject(valueAfter));
+
+//   console.log(`bothValuesAreObjects: ${bothValuesAreObjects}`)
+//   const onlyOneOfValuesIsAnObject = !bothValuesAreObjects && (_.isPlainObject(objectBefore) || _.isPlainObject(objectAfter));
+
+//   let operation = 'none';
+  
+
+
+//   if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
+//     operation = 'modify';
+//   }
+
+//   if (_.has(objectBefore, key) && !_.has(objectAfter, key)) {
+//     operation = 'remove';
+//   }
+
+//   if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
+//     operation = 'add';
+//   }
+
+//   const child = {
+//         operation,
+//         key,
+//         valueBefore,
+//         valueAfter,
+//         };
+
+//   if (bothValuesAreObjects && !valueNotChanged) {
+//     child.children = getDiff(valueBefore, valueAfter);
+//     }
+
+//   return child;
+// };
+
+// const getDiff = (objectBefore, objectAfter) => {
+//   const resultDiff = [];
+
+//   const keys = _.uniq([...Object.keys(objectBefore), ...Object.keys(objectAfter)]).sort();
+
+//   for (let i = 0; i < keys.length; i += 1) {
+//     // const key = ;
+
+//     // const valueBefore = objectBefore[key];
+//     // const valueAfter = objectAfter[key];
+
+
+
+//     const child = createChild(keys[i], objectBefore, objectAfter);
+
+
+//     resultDiff.push(child);
+//   }
+
+//   return resultDiff;
+// };
+
+// const a = getDiff(objectBefore, objectAfter);
+
+// console.log(a)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //  Рабочая версия, которую отметаем из-за того, что нужен отдельный объект-посредник ast и функция stylish, которая форматирует дифф
@@ -371,7 +509,7 @@ export default genDiff;
 // };
 
 // const afterObject = {
-//    struct1: {a: 122, z: 'fdsfsdf', l: {m:333}},  
+//    struct1: {a: 122, z: 'fdsfsdf', l: {m:333}},
 //   beforeValue: 'beforeValue',
 //   beforeValue2: 'beforeValue2Changed',
 //   valueString: 'value1',
@@ -388,10 +526,10 @@ export default genDiff;
 //   for (let key of objectKeys) {
 //     const keyValue = item[key];
 //     const value = _.isPlainObject(keyValue) ? getPrintValue(keyValue, margin) : keyValue;
-    
+
 //     result += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
 //   }
-  
+
 //   result += '\n' + ' '.repeat(margin) + '}';
 //   return result;
 // }
@@ -406,7 +544,7 @@ export default genDiff;
 //   if (_.has(beforeObject, key) && !(_.has(afterObject, key))) {
 //     operation = 'remove';
 //   }
-    
+
 //   if ((_.has(beforeObject, key) && _.has(afterObject, key)) && !(_.isEqual(beforeObject[key], afterObject[key]))) {
 //     operation = 'change';
 //   };
@@ -429,8 +567,8 @@ export default genDiff;
 
 //     const operation  = getTypeOfOperation(beforeObject, afterObject, key);
 //     const bothItemsAreObjects = _.isPlainObject(beforeItem) && _.isPlainObject(afterItem);
-    
-    
+
+
 
 //     s += outputPrefix;
 
