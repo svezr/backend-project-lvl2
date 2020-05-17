@@ -3,108 +3,146 @@ import _ from 'lodash';
 import getObjectFromFile from './parsers';
 
 
+const printPlainObject = (object, margin = 0) => {
+  let s = '';
+
+  const isObject = _.isPlainObject(object);
+  const keys = isObject ? Object.keys(object) : [object];
+
+  for (let key of keys) {
+    const valueIsObject = _.isPlainObject(object[key]);
+
+    if (isObject) {
+       s += '\n' + ' '.repeat(margin) + key + ': ';
+       s += valueIsObject ? '{' + printPlainObject(object[key], margin + 4) + '\n' + ' '.repeat(margin) + '}' : object[key];
+    } else {
+      s += key
+    }
+  }
+
+  return s;
+}
+
+
+const createChild = (key, objectBefore, objectAfter) => {
+  const valueBefore = objectBefore[key];
+  const valueAfter = objectAfter[key];
+
+  const valueNotChanged = _.isEqual(valueBefore, valueAfter);
+  const bothValuesExist = _.has(objectBefore,key) && _.has(objectAfter, key);
+  const bothValuesAreObjects = bothValuesExist && (_.isPlainObject(valueBefore) && _.isPlainObject(valueAfter));
+
+  const onlyOneOfValuesIsAnObject = !bothValuesAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
+
+  let operation = 'none';
+
+  if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
+    operation = 'modify';
+  }
+
+  if (_.has(objectBefore, key) && !_.has(objectAfter, key)) {
+    operation = 'remove';
+  }
+
+  if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
+    operation = 'add';
+  }
+
+  const child = {
+    operation,
+    key,
+    valueBefore,
+    valueAfter,
+  };
+
+  if (bothValuesAreObjects) {
+    child.children = getDiff(valueBefore, valueAfter).children;
+  }
+
+  return child;
+};
 
 
 const getDiff = (objectBefore, objectAfter) => {
-  const resultDiff = [];
+  const resultDiff = {};
 
-  // const children = [];
   const keys = _.uniq([...Object.keys(objectBefore), ...Object.keys(objectAfter)]).sort();
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-    let operation = 'none';
-
-    const valueBefore = objectBefore[key];
-    const valueAfter = objectAfter[key];
-
-    const bothValuesExist = _.has(objectBefore,key) && _.has(objectAfter, key);
-    const bothValuesAreObjects = bothValuesExist && (_.isPlainObject(valueBefore) && _.isPlainObject(valueAfter));
-    const onlyOneOfValuesIsAnObject = !bothValuesAreObjects && (_.isPlainObject(objectBefore) || _.isPlainObject(objectAfter));
-
-    if (bothValuesAreObjects) {
-      const tmp = getDiff(valueBefore, valueAfter);
-      // console.log(`!\t${tmp}`)
-      // children.push(tmp);
-      continue;
-    }
-
-    if (onlyOneOfValuesIsAnObject || (valueBefore !== valueAfter)) {
-      operation = 'modify';
-    }
-
-    if (valueBefore === valueAfter) {
-      operation = 'none';
-    }
-
-    if (_.has(objectBefore, key) && !_.has(objectAfter, key)) {
-      operation = 'remove';
-    }
-
-    if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
-      operation = 'add';
-    }
-
-    const child = {
-      operation,
-      key,
-      valueBefore,
-      valueAfter,
-    };
-
-    resultDiff.push(child);
-    // resultDiff.children.push(child);
+  if (keys.length > 0) {
+    resultDiff.children = [];
   }
 
-  // resultDiff.children = children.slice().sort();
-  // console.log(`!!!\t ${Object.values(resultDiff)[0]}\t${Object.values(resultDiff)[1]}`)
+  for (let i = 0; i < keys.length; i += 1) {
+    const child = createChild(keys[i], objectBefore, objectAfter);
+    resultDiff.children.push(child);
+  }
+
   return resultDiff;
 };
 
-const normalizeObject = (obj) => {
-  const entries = Object.entries(obj);
 
-  const fn = (acc, item) => {
-    const [objectKey, objectValue] = item;
+const prefix = (margin, sign, key) => `\n${' '.repeat(margin)}${sign} ${key}: `;
+const suffix = (margin) => `\n${' '.repeat(margin)}`;
 
-    acc[objectKey] = objectValue;
-    return acc;
-  };
 
-  return entries.reduce(fn, {});
+const printLine = (item, margin) => {
+  let line;
+
+  const { operation, key, valueBefore, valueAfter } = item;
+
+  switch (operation) {
+    case 'add':
+      if (_.isPlainObject(valueAfter)) {
+        line = prefix(margin, '+', key) + `{` + printPlainObject(valueAfter, margin + 4) + suffix(margin + 2) + '}';
+       } else {
+        line = prefix(margin, '+', key) + `${valueAfter}`;
+       }
+      break;
+    case 'remove':
+      if (_.isPlainObject(valueBefore)) {
+        line = prefix(margin, '-', key) + `{` + printPlainObject(valueBefore, margin + 4) + suffix(margin) + '}';        
+      } else {    
+        line = prefix(margin, '-', key) + `${valueBefore}`;
+      }
+      break;
+    case 'modify':
+      if (_.has(item, 'children')) {
+        line = prefix(margin, ' ', key) + `{`;
+
+        for (let child of item.children) {
+          line +=  ' '.repeat(margin) + printLine(child, margin + 4)
+        }
+
+         line += suffix(margin + 2) + '}';
+      } else {
+        line = prefix(margin, '-', key) + `${valueBefore}`;        
+        line += prefix(margin, '+', key) + `${valueAfter}`;
+      };
+      break;
+    default:
+      if (_.isPlainObject(valueBefore)) {
+        line = prefix(margin, ' ', key) + `{` + printPlainObject(valueBefore, margin + 4) + suffix(margin + 2) + '}';
+       } else {
+        line = prefix(margin, ' ', key) + `${valueBefore}`;
+       }
+  }
+
+  return line;
 };
 
-const getChildValue = (child) => {
-  if (child.operation === 'none') {
-    return child.valueBefore;
-  }
-
-  if (child.operation === 'add') {
-    return child.valueAfter;
-  }
-
-  if (child.operation === 'remove') {
-    return child.valueBefore;
-  };
-}
-
 const stylish = (diff, margin = 0) => {
-  // let resultValue = '{';
+  let stylishedDiff = '{';
+  
+  const { children } = diff;
 
-  // const keys = Object.keys(diff).sort();
+  for (let i = 0; i < children.length; i += 1) {
+     const item = children[i]
+      
+    let line = printLine(item, margin + 2);
+    stylishedDiff += line
+  }
 
-  // for (let key of keys) {
-  //   const value = getChildValue(diff[key]);
-
-  //   resultValue += '\n' + ' '.repeat(margin+4) + `${key}: ${value}`;
-
-  // }
-
-
-  // resultValue += '}';
-  console.log(diff)
-
-  // return resultValue;
+  return stylishedDiff + suffix(margin) + '}';
 }
 
 const genDiff = (filename1, filename2) => {
