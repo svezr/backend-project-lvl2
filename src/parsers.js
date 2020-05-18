@@ -36,6 +36,7 @@ const getObjectFromFile = (filePath) => {
     returnValue = parseData(fileData);
   } catch (e) {
     console.log(e.message);
+    return undefined;
   }
 
   return returnValue;

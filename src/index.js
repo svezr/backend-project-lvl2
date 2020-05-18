@@ -80,8 +80,7 @@ const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
   return resultDiff;
 };
 
-
-const printLine = (item, margin) => {
+const createLine = (item, margin) => {
   let line;
 
   const {
@@ -112,7 +111,7 @@ const printLine = (item, margin) => {
 
         for (let i = 0; i < item.children.length; i += 1) {
           const child = item.children[i];
-          line += ' '.repeat(margin) + printLine(child, margin + 4);
+          line += ' '.repeat(margin) + createLine(child, margin + 4);
         }
 
         line += suffix(margin + 2) + '}';
@@ -133,34 +132,28 @@ const printLine = (item, margin) => {
   return line;
 };
 
-const stylish = (diff, margin = 0) => {
+export const stylish = (diff, margin = 0) => {
   let stylishedDiff = '{';
 
   const { children } = diff;
 
   for (let i = 0; i < children.length; i += 1) {
     const item = children[i];
-    stylishedDiff += printLine(item, margin + 2);
+    stylishedDiff += createLine(item, margin + 2);
   }
 
   return stylishedDiff + suffix(margin) + '}';
 };
 
-const genDiff = (filename1, filename2) => {
+export const genDiff = (filename1, filename2) => {
   const objectBefore = getObjectFromFile(filename1);
   const objectAfter = getObjectFromFile(filename2);
 
   if (!objectBefore || !objectAfter) {
-    console.log('Error reading file!');
-    return;
+    throw new Error('Error reading file!');
   }
 
   const diff = getDiff(objectBefore, objectAfter);
 
-  const result = stylish(diff);
-
-  console.log(result);
-  return result;
+  return diff;
 };
-
-export default genDiff;
