@@ -145,7 +145,7 @@ export const stylish = (diff, margin = 0) => {
   return stylishedDiff + suffix(margin) + '}';
 };
 
-export const genDiff = (filename1, filename2) => {
+export const genDiff = (filename1, filename2, format) => {
   const objectBefore = getObjectFromFile(filename1);
   const objectAfter = getObjectFromFile(filename2);
 
@@ -155,5 +155,9 @@ export const genDiff = (filename1, filename2) => {
 
   const diff = getDiff(objectBefore, objectAfter);
 
-  return diff;
+  if (format === 'stylish') {
+    return stylish(diff);
+  }
+
+  throw new Error(`Unknown formatter! (${format})`);
 };

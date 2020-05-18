@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-import _ from 'lodash';
 import program from 'commander';
-import { genDiff, stylish } from '../index.js';
+import { genDiff } from '../index.js';
 
 program
   .description('Compares two configuration files and shows a difference.')
@@ -10,22 +9,10 @@ program
   .arguments('<firstConfig> <secondConfig>')
   .option('-f, --format [type]', 'output format')
   .action((firstConfig, secondConfig) => {
-    const formatter = program.format || 'tree';
+    const format = program.format || 'stylish';
 
-    const formatters = {
-      tree: stylish,
-    };
+    const resultDiff = genDiff(firstConfig, secondConfig, format);
 
-    if (!_.has(formatters, formatter)) {
-      throw new Error(`Unknown formatter! (${formatter})`);
-    }
-
-    const formatterFn = formatters[formatter];
-
-
-    const diff = genDiff(firstConfig, secondConfig);
-    const stylishedDiff = formatterFn(diff);
-
-    console.log(stylishedDiff);
+    console.log(resultDiff);
   })
   .parse(process.argv);
