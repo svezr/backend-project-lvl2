@@ -1,7 +1,8 @@
 import { expect } from '@jest/globals';
 import path from 'path';
+import { readFileSync } from 'fs';
 
-import genDiff from '../src';
+import { genDiff } from '../dist';
 
 const getFixturesDirectoryPath = () => {
   const delimiter = path.sep;
@@ -21,13 +22,12 @@ const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath()
 
 test('test1', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
-  const pathFileAddTest = getFixtureFilePath('structAddAfter.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter1.json');
   const pathFileAddResult = getFixtureFilePath('structTestResults.txt');
 
-  // expect(genDiff(pathFileBefore, pathFileAddTest)).toBe(testCorrectResults.add);
-  
+  const fileAndResult = readFileSync(pathFileAddResult, 'utf8');
 
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'stylish').trim();
 
-
+  expect(stylishedGenDiff).toBe(fileAndResult);
 });
-

@@ -111,7 +111,7 @@ const createLine = (item, margin) => {
 
         for (let i = 0; i < item.children.length; i += 1) {
           const child = item.children[i];
-          line += ' '.repeat(margin) + createLine(child, margin + 4);
+          line += createLine(child, margin + 4);
         }
 
         line += suffix(margin + 2) + '}';
