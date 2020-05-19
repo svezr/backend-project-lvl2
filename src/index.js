@@ -16,7 +16,7 @@ const stringifyPlainObject = (object, margin = 0) => {
 
     if (isObject) {
       s += prefix(margin, ' ', key);
-      s += valueIsObject ? '{' + stringifyPlainObject(object[key], margin + 4) + suffix(margin) + '}' : object[key];
+      s += valueIsObject ? '{' + stringifyPlainObject(object[key], margin + 4) + suffix(margin + 2) + '}' : object[key];
     } else {
       s += key;
     }
@@ -100,9 +100,9 @@ const createLine = (item, margin) => {
       break;
     case 'remove':
       if (_.isPlainObject(valueBefore)) {
-        line = prefix(margin, '-', key) + '{' + stringifyPlainObject(valueBefore, margin + 4) + suffix(margin) + '}';
+        line = prefix(margin, '-', key) + '{' + stringifyPlainObject(valueBefore, margin + 4) + suffix(margin + 2) + '}';
       } else {
-        line = prefix(margin, '-', key) + `${valueBefore}`;
+        line = prefix(margin, '-', key) + valueBefore;
       }
       break;
     case 'modify':
@@ -116,8 +116,8 @@ const createLine = (item, margin) => {
 
         line += suffix(margin + 2) + '}';
       } else {
-        const valueBeforeModify = (_.isPlainObject(valueBefore)) ? '{' + stringifyPlainObject(valueBefore, margin + 4) + suffix(margin) + '}' : valueBefore;
-        const valueAfterModify = (_.isPlainObject(valueAfter)) ? '{' + stringifyPlainObject(valueAfter, margin + 4) + suffix(margin) + '}' : valueAfter;
+        const valueBeforeModify = (_.isPlainObject(valueBefore)) ? '{' + stringifyPlainObject(valueBefore, margin + 4) + suffix(margin + 2) + '}' : valueBefore;
+        const valueAfterModify = (_.isPlainObject(valueAfter)) ? '{' + stringifyPlainObject(valueAfter, margin + 4) + suffix(margin + 2) + '}' : valueAfter;
 
         line = prefix(margin, '-', key) + valueBeforeModify;
         line += prefix(margin, '+', key) + valueAfterModify;
