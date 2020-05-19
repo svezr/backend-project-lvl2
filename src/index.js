@@ -116,8 +116,11 @@ const createLine = (item, margin) => {
 
         line += suffix(margin + 2) + '}';
       } else {
-        line = prefix(margin, '-', key) + valueBefore;
-        line += prefix(margin, '+', key) + valueAfter;
+        const valueBeforeModify = (_.isPlainObject(valueBefore)) ? '{' + stringifyPlainObject(valueBefore, margin + 4) + suffix(margin) + '}' : valueBefore;
+        const valueAfterModify = (_.isPlainObject(valueAfter)) ? '{' + stringifyPlainObject(valueAfter, margin + 4) + suffix(margin) + '}' : valueAfter;
+
+        line = prefix(margin, '-', key) + valueBeforeModify;
+        line += prefix(margin, '+', key) + valueAfterModify;
       }
 
       break;

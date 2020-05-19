@@ -1,0 +1,20 @@
+
+{
+  "beforeValue": "beforeValue",
+  "beforeValue2": "beforeValue2", 
+  "structEqual": {
+    "a": "a",
+    "b": "b",
+    "c": {
+      "x": "x",
+      "y": "y"
+    }
+  },
+  "structToChange": {
+    "key0": "keyOOO",
+    "key1": "key1Changed",
+    "key2": {
+      "key21": "key21"
+    }
+  }
+}
