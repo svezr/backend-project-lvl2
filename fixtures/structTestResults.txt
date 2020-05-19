@@ -1,0 +1,34 @@
+{
+    beforeValue: beforeValue
+    beforeValue2: beforeValue2
+    structEqual: {
+        a: a
+        b: b
+        c: {
+            x: x
+            y: y
+        }
+    }
+    structToChange: {
+      - key0: {
+            aaa: {
+                cz: ru
+            }
+        }
+      + key0: keyOOO
+      - key1: key1
+      + key1: key1Changed
+      - key2: key2
+      + key2: {
+            key21: key21
+        }
+      - key3: key3
+    }
+  - structToRemove: {
+        a: 1
+        r: {
+            r1: 4q
+            r2: 4q
+        }
+    }
+}
