@@ -1,8 +1,7 @@
-import { expect } from '@jest/globals';
 import path from 'path';
 import { readFileSync } from 'fs';
 
-import { genDiff } from '../src';
+import genDiff from '../src';
 
 const getFixturesDirectoryPath = () => {
   const delimiter = path.sep;
