@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const createLine = (item, parentProperty = '') => {
   let line;
 
@@ -8,6 +10,12 @@ const createLine = (item, parentProperty = '') => {
     valueAfter,
   } = item;
 
+
+  //  console.log(`\n${operation}\t${key}\t${valueBefore}\t${valueAfter}\n`)
+  // console.log(`\n${key}\tbothAvluesAreObjects: ${bothValuesAreObjects}\n`);
+
+  const parentPropertyLocal = parentProperty ? `${parentProperty}.${key}` : `${key}`;
+
   switch (operation) {
     case 'add':
       // if (_.isPlainObject(valueAfter)) {
@@ -15,7 +23,9 @@ const createLine = (item, parentProperty = '') => {
       // } else {
       //   line = prefix(margin, '+', key) + valueAfter;
       // }
-      line = `Property ${key} was added with value: ${valueAfter}`;
+      const resultValue = _.isPlainObject(valueAfter) ? '[comples value]' : valueAfter;
+
+      line = `Property ${parentPropertyLocal} was added with value: ${resultValue}\n`;
       break;
     case 'remove':
       // if (_.isPlainObject(valueBefore)) {
@@ -23,9 +33,37 @@ const createLine = (item, parentProperty = '') => {
       // } else {
       //   line = prefix(margin, '-', key) + valueBefore;
       // }
-      line = `Property ${key} was deleted`;
+      line = `Property ${parentPropertyLocal} was deleted\n`;
       break;
     case 'modify':
+
+
+      if (_.has(item, 'children')) {
+        console.log('1');
+
+        line = '';
+
+        for (let i = 0; i < item.children.length; i += 1) {
+          const child = item.children[i];
+
+          const bothValuesAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
+
+          if (bothValuesAreObjects) {
+            console.log(`!!!!!!!!! ${child.key} !!!!!!!!!!!!!!!!`)
+
+            const creatingLine = createLine(child, parentPropertyLocal);
+
+            console.log(`created line ${creatingLine}`);
+
+            line += creatingLine;
+          } else {
+            line += `Property ${parentPropertyLocal} was changed from '${valueBefore}' to '${valueAfter}'\n`;
+          }
+        }
+      }
+
+      // line = `Property ${parentPropertyLocal} was changed from '${valueBefore}' to '${valueAfter}'\n`;
+
       // if (_.has(item, 'children')) {
       //   line = prefix(margin, ' ', key) + '{';
 
@@ -42,7 +80,7 @@ const createLine = (item, parentProperty = '') => {
       //   line = prefix(margin, '-', key) + valueBeforeModify;
       //   line += prefix(margin, '+', key) + valueAfterModify;
       // }
-      line = `Property ${parentProperty}.${key} was changed from '${valueBefore}' to '${valueAfter}'`;
+
       break;
     default:
 
