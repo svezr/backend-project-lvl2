@@ -39,7 +39,7 @@ const createLine = (item, parentProperty = '') => {
 
 
       if (_.has(item, 'children')) {
-        console.log('1');
+        // console.log('1');
 
         line = '';
 
@@ -49,13 +49,12 @@ const createLine = (item, parentProperty = '') => {
           const bothValuesAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
 
           if (bothValuesAreObjects) {
-            console.log(`!!!!!!!!! ${child.key} !!!!!!!!!!!!!!!!`)
+            // console.log(`!!!!!!!!! ${child.key} !!!!!!!!!!!!!!!!`)
 
             const creatingLine = createLine(child, parentPropertyLocal);
 
-            console.log(`created line ${creatingLine}`);
-
             line += creatingLine;
+
           } else {
             line += `Property ${parentPropertyLocal} was changed from '${valueBefore}' to '${valueAfter}'\n`;
           }
