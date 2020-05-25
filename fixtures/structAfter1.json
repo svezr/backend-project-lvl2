@@ -16,5 +16,8 @@
     "key2": {
       "key21": "key21"
     }
+  },
+  "structToAdd": {
+    "add1": 1
   }
 }

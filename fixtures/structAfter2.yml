@@ -11,3 +11,6 @@ structToChange:
   key1: key1Changed
   key2:
     key21: key21
+structToAdd:
+  add1: 1
+  

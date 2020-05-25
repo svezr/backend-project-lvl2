@@ -9,6 +9,9 @@
             y: y
         }
     }
+  + structToAdd: {
+        add1: 1
+    }
     structToChange: {
       - key0: {
             aaa: {
