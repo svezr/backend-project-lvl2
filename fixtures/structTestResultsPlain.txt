@@ -1,0 +1,6 @@
+Property 'structToAdd' was added with value: '[comples value]'
+Property 'structToChange.key0' was changed from '[comples value]' to 'keyOOO'
+Property 'structToChange.key1' was changed from 'key1' to 'key1Changed'
+Property 'structToChange.key2' was changed from 'key2' to '[comples value]'
+Property 'structToChange.key3' was deleted
+Property 'structToRemove' was deleted

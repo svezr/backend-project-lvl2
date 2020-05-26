@@ -5,9 +5,9 @@ install:
 lint:
 	npx eslint .
 run:
-	node ./dist/bin/gendiff.js ./fixtures/structBeforeMain.json ./fixtures/structAfterMain.json
+	node ./dist/bin/gendiff.js ./fixtures/structBefore.json ./fixtures/structAfter1.json
 run2:
-	node ./dist/bin/gendiff.js ./fixtures/structBefore.json ./fixtures/structAddAfterTemp.json	
+	node ./dist/bin/gendiff.js ./fixtures/structBefore.json ./fixtures/structAfter1.json -f plain
 build:
 	npm run build
 test:
