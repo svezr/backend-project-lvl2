@@ -69,7 +69,7 @@ const genDiff = (filename1, filename2, format) => {
 
   const formatter = getFormatter(format);
 
-  return formatter(diff);
+  return formatter(diff).trim();
 };
 
 export default genDiff;

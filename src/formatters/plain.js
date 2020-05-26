@@ -3,7 +3,6 @@ import _ from 'lodash';
 const createLine = (item, parentProperty = '') => {
   let line = '';
 
-
   const {
     operation,
     key,
@@ -13,15 +12,14 @@ const createLine = (item, parentProperty = '') => {
 
   const parentPropertyLocal = parentProperty ? `${parentProperty}.${key}` : `${key}`;
   const resultValueBefore = _.isPlainObject(valueBefore) ? '[comples value]' : valueBefore;
-
   const resultValueAfter = _.isPlainObject(valueAfter) ? '[comples value]' : valueAfter;
 
   switch (operation) {
     case 'add':
-      line += `Property ${parentPropertyLocal} was added with value: ${resultValueAfter}\n`;
+      line += `Property '${parentPropertyLocal}' was added with value: '${resultValueAfter}'\n`;
       break;
     case 'remove':
-      line += `Property ${parentPropertyLocal} was deleted\n`;
+      line += `Property '${parentPropertyLocal}' was deleted\n`;
       break;
     case 'modify':
       if (_.has(item, 'children')) {
@@ -31,15 +29,13 @@ const createLine = (item, parentProperty = '') => {
           const bothValuesAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
 
           if (bothValuesAreObjects) {
-            const creatingLine = createLine(child, parentPropertyLocal);
-
-            line += creatingLine;
+            line += createLine(child, parentPropertyLocal);
           } else {
-            line += `Property ${parentPropertyLocal} was changed from '${valueBefore}' to '${valueAfter}'\n`;
+            line += `Property '${parentPropertyLocal}' was changed from '${resultValueBefore}' to '${resultValueAfter}'\n`;
           }
         }
       } else {
-        line += `Property ${parentPropertyLocal} was changed from '${resultValueBefore}' to '${resultValueAfter}'\n`;
+        line += `Property '${parentPropertyLocal}' was changed from '${resultValueBefore}' to '${resultValueAfter}'\n`;
       }
       break;
     default:

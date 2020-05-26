@@ -12,10 +12,10 @@ const getFixturesDirectoryPath = () => {
 
 const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath(), fileName);
 
-test('test JSON <-> JSON', () => {
+test('stylish formatter: JSON & JSON', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter1.json');
-  const pathFileAddResult = getFixtureFilePath('structTestResults.txt');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
   const correctData = readFileSync(pathFileAddResult, 'utf8');
 
@@ -24,10 +24,10 @@ test('test JSON <-> JSON', () => {
   expect(stylishedGenDiff).toBe(correctData);
 });
 
-test('test JSON <-> YAML', () => {
+test('stylish formatter: JSON & YAML', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
-  const pathFileAddResult = getFixtureFilePath('structTestResults.txt');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
   const correctData = readFileSync(pathFileAddResult, 'utf8');
 
@@ -36,14 +36,51 @@ test('test JSON <-> YAML', () => {
   expect(stylishedGenDiff).toBe(correctData);
 });
 
-test('test JSON <-> INI', () => {
+test('stylish formatter: JSON & INI', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
-  const pathFileAddResult = getFixtureFilePath('structTestResults.txt');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
   const correctData = readFileSync(pathFileAddResult, 'utf8');
 
   const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'stylish').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+
+test('plain formatter: JSON & JSON', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter1.json');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'plain').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+test('plain formatter: JSON & YAML', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'plain').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+test('plain formatter: JSON & INI', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'plain').trim();
 
   expect(stylishedGenDiff).toBe(correctData);
 });
