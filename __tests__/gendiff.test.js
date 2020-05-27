@@ -48,7 +48,6 @@ test('stylish formatter: JSON & INI', () => {
   expect(stylishedGenDiff).toBe(correctData);
 });
 
-
 test('plain formatter: JSON & JSON', () => {
   const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter1.json');
@@ -81,6 +80,43 @@ test('plain formatter: JSON & INI', () => {
   const correctData = readFileSync(pathFileAddResult, 'utf8');
 
   const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'plain').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+
+test('JSON formatter: JSON & JSON', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter1.json');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'json').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+test('JSON formatter: JSON & YAML', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'json').trim();
+
+  expect(stylishedGenDiff).toBe(correctData);
+});
+
+test('JSON formatter: JSON & INI', () => {
+  const pathFileBefore = getFixtureFilePath('structBefore.json');
+  const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
+  const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
+
+  const correctData = readFileSync(pathFileAddResult, 'utf8');
+
+  const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'json').trim();
 
   expect(stylishedGenDiff).toBe(correctData);
 });
