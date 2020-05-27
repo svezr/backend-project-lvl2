@@ -10,7 +10,7 @@
         }
     }
   + structToAdd: {
-        add1: 1
+        add1: great1
     }
     structToChange: {
       - key0: {

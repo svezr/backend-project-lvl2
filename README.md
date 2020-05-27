@@ -9,8 +9,6 @@ gendiff
 
 ![jest test](https://github.com/svezr/backend-project-lvl2/workflows/jest%20test/badge.svg)
 
-asciinema с демонстрацией работы (5 шаг)
+asciinema с демонстрацией работы (9 шаг)
 
-[![asciicast](https://asciinema.org/a/Wa2GicS6Tp6ThCaLO8LNwyx5R.svg)](https://asciinema.org/a/Wa2GicS6Tp6ThCaLO8LNwyx5R)
-
-
+[![asciicast](https://asciinema.org/a/yts4GnHd6LMCWDE2lxyzFJxCU.svg)](https://asciinema.org/a/yts4GnHd6LMCWDE2lxyzFJxCU)
