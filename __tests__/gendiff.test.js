@@ -12,8 +12,9 @@ const getFixturesDirectoryPath = () => {
 
 const getFixtureFilePath = (fileName) => path.resolve(getFixturesDirectoryPath(), fileName);
 
+const pathFileBefore = getFixtureFilePath('structBefore.json');
+
 test('stylish formatter: JSON & JSON', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter1.json');
   const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
@@ -25,7 +26,6 @@ test('stylish formatter: JSON & JSON', () => {
 });
 
 test('stylish formatter: JSON & YAML', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
   const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
@@ -37,7 +37,6 @@ test('stylish formatter: JSON & YAML', () => {
 });
 
 test('stylish formatter: JSON & INI', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
   const pathFileAddResult = getFixtureFilePath('structTestResultsStylish.txt');
 
@@ -49,7 +48,6 @@ test('stylish formatter: JSON & INI', () => {
 });
 
 test('plain formatter: JSON & JSON', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter1.json');
   const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
 
@@ -61,7 +59,6 @@ test('plain formatter: JSON & JSON', () => {
 });
 
 test('plain formatter: JSON & YAML', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
   const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
 
@@ -73,7 +70,6 @@ test('plain formatter: JSON & YAML', () => {
 });
 
 test('plain formatter: JSON & INI', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
   const pathFileAddResult = getFixtureFilePath('structTestResultsPlain.txt');
 
@@ -86,7 +82,6 @@ test('plain formatter: JSON & INI', () => {
 
 
 test('JSON formatter: JSON & JSON', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter1.json');
   const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
 
@@ -98,7 +93,6 @@ test('JSON formatter: JSON & JSON', () => {
 });
 
 test('JSON formatter: JSON & YAML', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter2.yml');
   const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
 
@@ -110,10 +104,8 @@ test('JSON formatter: JSON & YAML', () => {
 });
 
 test('JSON formatter: JSON & INI', () => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
   const pathFileAddTest = getFixtureFilePath('structAfter3.ini');
   const pathFileAddResult = getFixtureFilePath('structTestResultsJSON.txt');
-
   const correctData = readFileSync(pathFileAddResult, 'utf8');
 
   const stylishedGenDiff = genDiff(pathFileBefore, pathFileAddTest, 'json').trim();
