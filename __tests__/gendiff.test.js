@@ -5,8 +5,9 @@ import genDiff from '../src';
 
 const getFixturesDirectoryPath = () => {
   const delimiter = path.sep;
-  const fixturesPath = __dirname.split(delimiter);
-  fixturesPath.pop();
+  const fixturesFullPath = __dirname.split(delimiter);
+  const fixturesPath = fixturesFullPath.slice(0, fixturesFullPath.length - 1);
+
   return path.resolve(fixturesPath.join(delimiter), 'fixtures');
 };
 
