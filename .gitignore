@@ -6,3 +6,4 @@ backup/*
 testfile1.json
 testfile2.json
 .vscoode/*
+.idea/*
