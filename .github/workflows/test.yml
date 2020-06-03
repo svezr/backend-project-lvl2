@@ -30,3 +30,5 @@ jobs:
     - run: make lint
     - name: run Jest
       uses: stefanoeb/jest-action@1.0.3
+    - name: Code Climate coverage
+      uses: paambaati/codeclimate-action@v2.6.0
