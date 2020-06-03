@@ -15,7 +15,7 @@ const getParser = (filePath) => {
     case '.ini':
       return ini.parse;
     default:
-      return undefined;
+      throw new Error('Unknown extension!');
   }
 };
 
@@ -26,17 +26,14 @@ const getObjectFromFile = (filePath) => {
   let returnValue;
 
   try {
-    const fileData = readFileSync(getFullFilePath(filePath), 'utf8');
-    const parseData = getParser(filePath);
+    const fullFilePath = getFullFilePath(filePath);
+    const rawData = readFileSync(fullFilePath, 'utf8');
+    const parsedData = getParser(filePath);
 
-    if (!parseData) {
-      throw new Error('Unknown extension!');
-    }
-
-    returnValue = parseData(fileData);
+    returnValue = parsedData(rawData);
   } catch (e) {
-    console.log(e.message);
-    return undefined;
+    console.log(`${e.name}: ${e.message}`);
+    throw new Error('Error processing file!');
   }
 
   return returnValue;

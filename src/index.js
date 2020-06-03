@@ -61,10 +61,6 @@ const genDiff = (filename1, filename2, format) => {
   const objectBefore = getObjectFromFile(filename1);
   const objectAfter = getObjectFromFile(filename2);
 
-  if (!objectBefore || !objectAfter) {
-    throw new Error('Error reading file!');
-  }
-
   const diff = getDiff(objectBefore, objectAfter);
 
   const formatter = getFormatter(format);
