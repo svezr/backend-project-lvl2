@@ -7,11 +7,9 @@ program
   .version('0.0.1')
   .helpOption('-h, --help', 'output usage information')
   .arguments('<firstConfig> <secondConfig>')
-  .option('-f, --format [type]', 'output format')
+  .option('-f, --format [type]', 'output format', 'stylish')
   .action((firstConfig, secondConfig) => {
-    const format = program.format || 'stylish';
-
-    const resultDiff = genDiff(firstConfig, secondConfig, format);
+    const resultDiff = genDiff(firstConfig, secondConfig, program.format);
 
     console.log(resultDiff);
   })
