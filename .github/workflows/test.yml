@@ -25,7 +25,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g yarn
-    - run: npm install
+    - run: yarn install
+    - run: yarn build
       env:
         CI: true
     - run: make lint
@@ -33,3 +34,7 @@ jobs:
       uses: stefanoeb/jest-action@1.0.3
     - name: Code Climate coverage
       uses: paambaati/codeclimate-action@v2.6.0
+      env:
+        CC_TEST_REPORTER_ID: 76492651e595b19d26e62a9b20d87404b1731324fd45fd404b76aeaa3338cf8d
+      with:
+        coverageCommand: yarn coverage
