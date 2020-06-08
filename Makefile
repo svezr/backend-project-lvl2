@@ -13,4 +13,4 @@ run3:
 build:
 	npm run build
 test:
-	npx jest
+	make build && npx jest
