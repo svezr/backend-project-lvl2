@@ -43,29 +43,27 @@ const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
 
   const resultDiff = {};
 
-  const keys = _.uniq([...Object.keys(sourceObjectBefore), ...Object.keys(sourceObjectAfter)]).sort();
+  const keys = _.union(_.keys(sourceObjectBefore), _.keys(sourceObjectAfter)).sort();
 
   if (keys.length > 0) {
-    resultDiff.children = [];
-  }
-
-  for (let i = 0; i < keys.length; i += 1) {
-    const child = createChild(keys[i], sourceObjectBefore, sourceObjectAfter);
-    resultDiff.children.push(child);
+    resultDiff.children = keys.reduce((acc, item) => {
+      const child = createChild(item, sourceObjectBefore, sourceObjectAfter);
+      return [...acc, child];
+    }, []);
   }
 
   return resultDiff;
 };
 
-const genDiff = (filename1, filename2, format) => {
-  const objectBefore = getObjectFromFile(filename1);
-  const objectAfter = getObjectFromFile(filename2);
+const genDiff = (fileNameBefore, fileNameAfter, format) => {
+  const objectBefore = getObjectFromFile(fileNameBefore);
+  const objectAfter = getObjectFromFile(fileNameAfter);
 
   const diff = getDiff(objectBefore, objectAfter);
 
   const formatter = getFormatter(format);
 
-  return formatter(diff).trim();
+  return formatter(diff);
 };
 
 export default genDiff;

@@ -5,9 +5,9 @@ import { readFileSync } from 'fs';
 import process from 'process';
 
 const getParser = (filePath) => {
-  const format = path.extname(filePath);
+  const extension = path.extname(filePath).toLowerCase();
 
-  switch (format.toLowerCase()) {
+  switch (extension) {
     case '.json':
       return JSON.parse;
     case '.yml':
@@ -19,24 +19,24 @@ const getParser = (filePath) => {
   }
 };
 
-const getFullFilePath = (fileName) => (path.isAbsolute(fileName)
-  ? fileName : path.resolve(process.cwd(), fileName));
-
-const getObjectFromFile = (filePath) => {
-  let returnValue;
+const getRawFileData = (filePath) => {
+  let rawData;
+  const fullFilePath = path.isAbsolute(filePath) ? filePath : path.resolve(process.cwd(), filePath);
 
   try {
-    const fullFilePath = getFullFilePath(filePath);
-    const rawData = readFileSync(fullFilePath, 'utf8');
-    const parsedData = getParser(filePath);
-
-    returnValue = parsedData(rawData);
+    rawData = readFileSync(fullFilePath, 'utf8');
   } catch (e) {
     console.log(`${e.name}: ${e.message}`);
     throw new Error('Error processing file!');
   }
+  return rawData;
+};
 
-  return returnValue;
+const getObjectFromFile = (filePath) => {
+  const rawData = getRawFileData(filePath);
+  const parser = getParser(filePath);
+
+  return parser(rawData);
 };
 
 export default getObjectFromFile;
