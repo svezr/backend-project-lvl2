@@ -15,17 +15,13 @@ const testDescriptionTable = [
 ];
 
 describe.each(testDescriptionTable)('test suite', (testName, correctResultFileName, fileAfterName, formatter) => {
-  const pathFileBefore = getFixtureFilePath('structBefore.json');
-
-  const pathFileAfter = (fileAfterNameSrc) => getFixtureFilePath(fileAfterNameSrc);
-
   const getCorrectData = (correctResultFileNameSrc) => {
     const pathFileCorrectResult = getFixtureFilePath(correctResultFileNameSrc);
     return readFileSync(pathFileCorrectResult, 'utf8');
   };
 
   test(testName, () => {
-    const result = genDiff(pathFileBefore, pathFileAfter(fileAfterName), formatter);
+    const result = genDiff(getFixtureFilePath('structBefore.json'), getFixtureFilePath(fileAfterName), formatter);
     const correctData = getCorrectData(correctResultFileName);
     expect(result).toBe(correctData);
   });
