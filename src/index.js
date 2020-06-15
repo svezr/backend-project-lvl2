@@ -6,8 +6,8 @@ import getFormatter from './formatters';
 import getParsedData from './parsers';
 
 
-const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
-  const createChild = (key, objectBefore, objectAfter) => {
+const getDiff = (objectBefore, objectAfter, key = undefined) => {
+  if (key) {
     const valueBefore = objectBefore[key];
     const valueAfter = objectAfter[key];
 
@@ -43,18 +43,13 @@ const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
     }
 
     return child;
-  };
+  }
 
   const resultDiff = {};
 
-  const keys = _.union(_.keys(sourceObjectBefore), _.keys(sourceObjectAfter)).sort();
+  const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
 
-  if (keys.length > 0) {
-    resultDiff.children = keys.reduce((acc, item) => {
-      const child = createChild(item, sourceObjectBefore, sourceObjectAfter);
-      return [...acc, child];
-    }, []);
-  }
+  resultDiff.children = keys.map((item) => getDiff(objectBefore, objectAfter, item));
 
   return resultDiff;
 };
@@ -76,7 +71,7 @@ const getDataFromFile = (filePath) => {
   try {
     rawData = readFileSync(fullFilePath, 'utf8');
   } catch (e) {
-    throw new Error(`Error processing file!\n${e.name}: ${e.message}`);
+    throw new Error(`Error reading file!\n${e.name}: ${e.message}`);
   }
   return rawData;
 };
@@ -87,9 +82,9 @@ const genDiff = (fileNameBefore, fileNameAfter, format) => {
 
   const diff = getDiff(objectBefore, objectAfter);
 
-  const formatter = getFormatter(format);
+  const formatDiff = getFormatter(format);
 
-  return formatter(diff);
+  return formatDiff(diff);
 };
 
 export default genDiff;

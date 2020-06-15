@@ -14,3 +14,6 @@ build:
 	npm run build
 test:
 	make build && npx jest
+all:
+	make lint && make build && make test
+	
