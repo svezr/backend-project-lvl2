@@ -1,6 +1,10 @@
 import _ from 'lodash';
-import getObjectFromFile from './parsers';
+import path from 'path';
+import { readFileSync } from 'fs';
+import process from 'process';
 import getFormatter from './formatters';
+import getParsedData from './parsers';
+
 
 const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
   const createChild = (key, objectBefore, objectAfter) => {
@@ -55,9 +59,31 @@ const getDiff = (sourceObjectBefore, sourceObjectAfter) => {
   return resultDiff;
 };
 
+const getFileFormatName = (filePath) => {
+  const extension = path.extname(filePath).toLowerCase();
+
+  if (!extension) {
+    throw new Error('No file extension detected!');
+  }
+
+  return extension.slice(1);
+};
+
+const getDataFromFile = (filePath) => {
+  let rawData = '';
+  const fullFilePath = path.isAbsolute(filePath) ? filePath : path.resolve(process.cwd(), filePath);
+
+  try {
+    rawData = readFileSync(fullFilePath, 'utf8');
+  } catch (e) {
+    throw new Error(`Error processing file!\n${e.name}: ${e.message}`);
+  }
+  return rawData;
+};
+
 const genDiff = (fileNameBefore, fileNameAfter, format) => {
-  const objectBefore = getObjectFromFile(fileNameBefore);
-  const objectAfter = getObjectFromFile(fileNameAfter);
+  const objectBefore = getParsedData(getDataFromFile(fileNameBefore), getFileFormatName(fileNameBefore));
+  const objectAfter = getParsedData(getDataFromFile(fileNameAfter), getFileFormatName(fileNameAfter));
 
   const diff = getDiff(objectBefore, objectAfter);
 
