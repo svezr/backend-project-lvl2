@@ -12,11 +12,33 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const valueAfter = objectAfter[key];
 
     const valueNotChanged = _.isEqual(valueBefore, valueAfter);
-    const bothValuesExist = _.has(objectBefore, key) && _.has(objectAfter, key);
-    const bothValuesAreObjects = bothValuesExist && (_.isPlainObject(valueBefore) && _.isPlainObject(valueAfter));
 
-    const onlyOneOfValuesIsAnObject = !bothValuesAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
+    const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
+    const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
 
+    // const operations = {
+    //   modify: onlyOneOfValuesIsAnObject || (!valueNotChanged),
+    //   add: !_.has(objectBefore, key) && _.has(objectAfter, key),
+    //   remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
+    //   none: true,
+    // };
+
+    // for (let operation in operations) {
+    //   if (operations[operation]) {
+    //     const child = {
+    //       operation,
+    //       key,
+    //       valueBefore,
+    //       valueAfter,
+    //     };
+    
+    //     if (bothValueAreObjects) {
+    //       child.children = getDiff(valueBefore, valueAfter).children;
+    //     }
+    
+    //     return child;
+    //   }
+    // }
     let operation = 'none';
 
     if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
@@ -30,7 +52,6 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
       operation = 'add';
     }
-
     const child = {
       operation,
       key,
@@ -38,11 +59,12 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
       valueAfter,
     };
 
-    if (bothValuesAreObjects) {
+    if (bothValueAreObjects) {
       child.children = getDiff(valueBefore, valueAfter).children;
     }
 
     return child;
+
   }
 
   const resultDiff = {};

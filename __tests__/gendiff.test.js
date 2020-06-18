@@ -1,6 +1,5 @@
 import path from 'path';
 import { readFileSync } from 'fs';
-
 import genDiff from '../src';
 
 const getFixtureFilePath = (fileName) => {
