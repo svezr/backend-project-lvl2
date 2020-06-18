@@ -16,12 +16,40 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
     const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
 
-    // const operations = {
-    //   modify: onlyOneOfValuesIsAnObject || (!valueNotChanged),
-    //   add: !_.has(objectBefore, key) && _.has(objectAfter, key),
-    //   remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
-    //   none: true,
-    // };
+    const operations = {
+      modify: onlyOneOfValuesIsAnObject || (!valueNotChanged),
+      remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
+      add: !_.has(objectBefore, key) && _.has(objectAfter, key),
+      none: true,
+    };
+
+    let child;
+    console.log('start');
+
+    //  где-то 2 операции истина (искл. none)
+    // когда [object object ] и undefined
+    for (let operation in operations) {
+      // console.log(operation, operations[operation]);
+      if (operations[operation]) {
+         child = {
+          operation,
+          key,
+          valueBefore,
+          valueAfter,
+        };    
+        
+        console.log(`before: ${valueBefore} after: ${valueAfter}` + )
+        console.log('operation ' + operation + " is true")
+
+      }
+    };
+
+    if (bothValueAreObjects) {
+      child.children = getDiff(valueBefore, valueAfter).children;
+    }
+
+    return child;
+
 
     // for (let operation in operations) {
     //   if (operations[operation]) {
@@ -52,12 +80,12 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
       operation = 'add';
     }
-    const child = {
-      operation,
-      key,
-      valueBefore,
-      valueAfter,
-    };
+    // const child = {
+    //   operation,
+    //   key,
+    //   valueBefore,
+    //   valueAfter,
+    // };
 
     if (bothValueAreObjects) {
       child.children = getDiff(valueBefore, valueAfter).children;
