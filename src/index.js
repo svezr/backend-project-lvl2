@@ -11,38 +11,40 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const valueBefore = objectBefore[key];
     const valueAfter = objectAfter[key];
 
-    const valueNotChanged = _.isEqual(valueBefore, valueAfter);
+    const valueNotChanged = (typeof valueBefore object) && (typeof valueAfter object) ? _.isEqual(valueBefore, valueAfter) : valueBefore === valueAfter;
 
     const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
     const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
 
     const operations = {
       modify: onlyOneOfValuesIsAnObject || (!valueNotChanged),
-      remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
+      remove: bothValueAreObjects && (_.has(objectBefore, key) && !_.has(objectAfter, key)),
       add: !_.has(objectBefore, key) && _.has(objectAfter, key),
       none: true,
     };
 
-    let child;
-    console.log('start');
+    let child = {};
+    // console.log('start');
 
     //  где-то 2 операции истина (искл. none)
     // когда [object object ] и undefined
-    for (let operation in operations) {
-      // console.log(operation, operations[operation]);
-      if (operations[operation]) {
-         child = {
-          operation,
-          key,
-          valueBefore,
-          valueAfter,
-        };    
+    // for (let operation in operations) {
+    //   // console.log(operation, operations[operation]);
+    //   if (operations[operation]) {
+    //      child = {
+    //       operation,
+    //       key,
+    //       valueBefore,
+    //       valueAfter,
+    //     };    
         
-        console.log(`before: ${valueBefore} after: ${valueAfter}` + )
-        console.log('operation ' + operation + " is true")
+    //     console.log(`before: ${valueBefore} after: ${valueAfter}\noperation: ${operation} is true\nmodify"${operations.modify}, add: ${operations.add}, remove: ${operations.remove}, none: ${operations.none}`)
 
-      }
-    };
+    //   }
+    // };
+
+    console.log(`before: ${valueBefore} after: ${valueAfter}\nmodify"${operations.modify}, add: ${operations.add}, remove: ${operations.remove}, none: ${operations.none}`)
+
 
     if (bothValueAreObjects) {
       child.children = getDiff(valueBefore, valueAfter).children;
