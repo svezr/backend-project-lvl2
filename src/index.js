@@ -11,7 +11,7 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const valueBefore = objectBefore[key];
     const valueAfter = objectAfter[key];
 
-    const valueNotChanged = (typeof valueBefore object) && (typeof valueAfter object) ? _.isEqual(valueBefore, valueAfter) : valueBefore === valueAfter;
+    const valueNotChanged = _.isEqual(valueBefore, valueAfter);
 
     const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
     const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
