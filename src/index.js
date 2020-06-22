@@ -16,59 +16,6 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
     const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
 
-    const operations = {
-      modify: onlyOneOfValuesIsAnObject || (!valueNotChanged),
-      remove: bothValueAreObjects && (_.has(objectBefore, key) && !_.has(objectAfter, key)),
-      add: !_.has(objectBefore, key) && _.has(objectAfter, key),
-      none: true,
-    };
-
-    let child = {};
-    // console.log('start');
-
-    //  где-то 2 операции истина (искл. none)
-    // когда [object object ] и undefined
-    // for (let operation in operations) {
-    //   // console.log(operation, operations[operation]);
-    //   if (operations[operation]) {
-    //      child = {
-    //       operation,
-    //       key,
-    //       valueBefore,
-    //       valueAfter,
-    //     };    
-        
-    //     console.log(`before: ${valueBefore} after: ${valueAfter}\noperation: ${operation} is true\nmodify"${operations.modify}, add: ${operations.add}, remove: ${operations.remove}, none: ${operations.none}`)
-
-    //   }
-    // };
-
-    console.log(`before: ${valueBefore} after: ${valueAfter}\nmodify"${operations.modify}, add: ${operations.add}, remove: ${operations.remove}, none: ${operations.none}`)
-
-
-    if (bothValueAreObjects) {
-      child.children = getDiff(valueBefore, valueAfter).children;
-    }
-
-    return child;
-
-
-    // for (let operation in operations) {
-    //   if (operations[operation]) {
-    //     const child = {
-    //       operation,
-    //       key,
-    //       valueBefore,
-    //       valueAfter,
-    //     };
-    
-    //     if (bothValueAreObjects) {
-    //       child.children = getDiff(valueBefore, valueAfter).children;
-    //     }
-    
-    //     return child;
-    //   }
-    // }
     let operation = 'none';
 
     if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
@@ -82,12 +29,12 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
       operation = 'add';
     }
-    // const child = {
-    //   operation,
-    //   key,
-    //   valueBefore,
-    //   valueAfter,
-    // };
+    const child = {
+      operation,
+      key,
+      valueBefore,
+      valueAfter,
+    };
 
     if (bothValueAreObjects) {
       child.children = getDiff(valueBefore, valueAfter).children;
@@ -97,6 +44,8 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
 
   }
 
+
+  
   const resultDiff = {};
 
   const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
