@@ -18,6 +18,17 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
 
     let operation = 'none';
 
+    ///////
+    const modify = ((_.has(objectBefore, key) && _.has(objectAfter, key)) && (!valueNotChanged)) || onlyOneOfValuesIsAnObject ;
+    const modifyTemp = (bothValueAreObjects && !valueNotChanged);
+    const temp = onlyOneOfValuesIsAnObject;
+    const remove = _.has(objectBefore, key) && !_.has(objectAfter, key);
+    const add = !_.has(objectBefore, key) && _.has(objectAfter, key);
+
+    console.log(`valueBefore: ${valueBefore}\tvalueAfter${valueAfter}\tmodify: ${modify}\tremove${remove}\tadd:${add}\nmodifyTemp: ${modifyTemp} \t temp: ${temp}`);
+    // console.log('valueBefore: ' + valueBefore);
+    // console.log('valueAfter: ' + valueAfter);
+    ///////
     if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
       operation = 'modify';
     }
@@ -29,6 +40,8 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
       operation = 'add';
     }
+
+    
     const child = {
       operation,
       key,
