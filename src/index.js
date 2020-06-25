@@ -11,54 +11,82 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
     const valueBefore = objectBefore[key];
     const valueAfter = objectAfter[key];
 
-    const valueNotChanged = _.isEqual(valueBefore, valueAfter);
+    const valueChanged = !_.isEqual(valueBefore, valueAfter);
 
     const bothValueAreObjects = _.isPlainObject(valueBefore) && _.isPlainObject(valueAfter);
     const onlyOneOfValuesIsAnObject = !bothValueAreObjects && (_.isPlainObject(valueBefore) || _.isPlainObject(valueAfter));
+    const bothValuesExist = _.has(objectBefore, key) && _.has(objectAfter, key);
 
-    let operation = 'none';
-
-    ///////
-    const modify = ((_.has(objectBefore, key) && _.has(objectAfter, key)) && (!valueNotChanged)) || onlyOneOfValuesIsAnObject ;
-    const modifyTemp = (bothValueAreObjects && !valueNotChanged);
-    const temp = onlyOneOfValuesIsAnObject;
-    const remove = _.has(objectBefore, key) && !_.has(objectAfter, key);
-    const add = !_.has(objectBefore, key) && _.has(objectAfter, key);
-
-    console.log(`valueBefore: ${valueBefore}\tvalueAfter${valueAfter}\tmodify: ${modify}\tremove${remove}\tadd:${add}\nmodifyTemp: ${modifyTemp} \t temp: ${temp}`);
-    // console.log('valueBefore: ' + valueBefore);
-    // console.log('valueAfter: ' + valueAfter);
-    ///////
-    if (onlyOneOfValuesIsAnObject || (!valueNotChanged)) {
-      operation = 'modify';
-    }
-
-    if (_.has(objectBefore, key) && !_.has(objectAfter, key)) {
-      operation = 'remove';
-    }
-
-    if (!_.has(objectBefore, key) && _.has(objectAfter, key)) {
-      operation = 'add';
-    }
-
-    
-    const child = {
-      operation,
-      key,
-      valueBefore,
-      valueAfter,
+    const operationMap = {
+      modify: (bothValuesExist && valueChanged) || (bothValuesExist && onlyOneOfValuesIsAnObject),
+      remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
+      add: !_.has(objectBefore, key) && _.has(objectAfter, key),
+      none: true,
     };
 
-    if (bothValueAreObjects) {
-      child.children = getDiff(valueBefore, valueAfter).children;
+    const operationsKeys = Object.keys(operationMap);
+    
+    // operationsKeys.forEach((operation) => {
+      
+      
+    //   if (operationMap[operation]) {
+    //     const child = {
+    //       operation,
+    //       key,
+    //       valueBefore,
+    //       valueAfter,
+    //     };
+
+    //     if (bothValueAreObjects) {
+    //       child.children = getDiff(valueBefore, valueAfter).children;
+    //     }
+
+    //     return child;
+    //   }
+    // }
+    // );
+    
+    // operationsKeys.map((operation, index) => {
+    //   // const operation = operationMap[item];
+    //    console.log(index)
+    //   if (operationMap[operation]){
+    //     const child = {
+    //       operation,
+    //       key,
+    //       valueBefore,
+    //       valueAfter,
+    //     };
+
+    //     if (bothValueAreObjects && valueChanged) {
+    //       child.children = getDiff(valueBefore, valueAfter).children;
+    //     }
+
+    //     return child;
+    //   }
+    // });
+
+    for (let i = 0; i < operationsKeys.length; i += 1) {
+      const operation = operationsKeys[i];
+
+      if (operationMap[operation]) {
+        const child = {
+          operation,
+          key,
+          valueBefore,
+          valueAfter,
+        };
+
+        if (bothValueAreObjects) {
+          child.children = getDiff(valueBefore, valueAfter).children;
+        }
+
+        return child;
+      }
     }
 
-    return child;
 
   }
 
-
-  
   const resultDiff = {};
 
   const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
