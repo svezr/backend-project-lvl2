@@ -5,7 +5,6 @@ import process from 'process';
 import getFormatter from './formatters';
 import getParsedData from './parsers';
 
-
 const getDiff = (objectBefore, objectAfter, key = undefined) => {
   if (key) {
     const valueBefore = objectBefore[key];
@@ -21,70 +20,23 @@ const getDiff = (objectBefore, objectAfter, key = undefined) => {
       modify: (bothValuesExist && valueChanged) || (bothValuesExist && onlyOneOfValuesIsAnObject),
       remove: _.has(objectBefore, key) && !_.has(objectAfter, key),
       add: !_.has(objectBefore, key) && _.has(objectAfter, key),
-      none: true,
     };
 
     const operationsKeys = Object.keys(operationMap);
-    
-    // operationsKeys.forEach((operation) => {
-      
-      
-    //   if (operationMap[operation]) {
-    //     const child = {
-    //       operation,
-    //       key,
-    //       valueBefore,
-    //       valueAfter,
-    //     };
+    const child = operationsKeys.reduce((acc, item) => (
+      operationMap[item] ? { ...acc, operation: item } : acc
+    ),
+    {
+      operation: 'none',
+      key,
+      valueBefore,
+      valueAfter,
+    });
 
-    //     if (bothValueAreObjects) {
-    //       child.children = getDiff(valueBefore, valueAfter).children;
-    //     }
-
-    //     return child;
-    //   }
-    // }
-    // );
-    
-    // operationsKeys.map((operation, index) => {
-    //   // const operation = operationMap[item];
-    //    console.log(index)
-    //   if (operationMap[operation]){
-    //     const child = {
-    //       operation,
-    //       key,
-    //       valueBefore,
-    //       valueAfter,
-    //     };
-
-    //     if (bothValueAreObjects && valueChanged) {
-    //       child.children = getDiff(valueBefore, valueAfter).children;
-    //     }
-
-    //     return child;
-    //   }
-    // });
-
-    for (let i = 0; i < operationsKeys.length; i += 1) {
-      const operation = operationsKeys[i];
-
-      if (operationMap[operation]) {
-        const child = {
-          operation,
-          key,
-          valueBefore,
-          valueAfter,
-        };
-
-        if (bothValueAreObjects) {
-          child.children = getDiff(valueBefore, valueAfter).children;
-        }
-
-        return child;
-      }
+    if (bothValueAreObjects) {
+      child.children = getDiff(valueBefore, valueAfter).children;
     }
-
-
+    return child;
   }
 
   const resultDiff = {};
