@@ -5,47 +5,87 @@ import process from 'process';
 import getFormatter from './formatters';
 import getParsedData from './parsers';
 
-const getDiff = (objectBefore, objectAfter) => {
-  const resultDiff = {};
 
+const createNode = (operation, key, valueBefore, valueAfter) => ({ operation, key, valueBefore, valueAfter });
+
+const getDiff = (objectBefore, objectAfter, key) => {
   const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
 
   if (_.isEqual(objectBefore, objectAfter)) {
-    console.log('none');
-    return
+    return createNode('none', key, objectBefore, objectAfter)
   }
-  
+
   if (!objectBefore && objectAfter) {
-    console.log('added');
-    return objectAfter
+    return createNode('add', key, objectBefore, objectAfter)
   }
 
   if (objectBefore && !objectAfter) {
-    console.log('deleted');
-    return objectBefore
+    return createNode('remove', key, objectBefore, objectAfter)
   }
-  
+
   if (
     (_.isPlainObject(objectBefore) && !_.isPlainObject(objectAfter))
     ||
     (!_.isPlainObject(objectBefore) && _.isPlainObject(objectAfter))
   ) {
-    console.log('changed');
-    return objectAfter
+    return createNode('modify', key, objectBefore, objectAfter)
   }
 
-  //2 неОбъекта
   if (!_.isPlainObject(objectBefore) && !_.isPlainObject(objectAfter)) {
-    console.log('changed')
-    return {ob1: objectBefore, ob2: objectAfter}
+    return createNode('modify', key, objectBefore, objectAfter);
   }
-  
-  //остается только вариант, когда 2 объекта
 
-  resultDiff.children = keys.map((item) => getDiff(objectBefore[item], objectAfter[item]));
+  if (_.isPlainObject(objectBefore) && _.isPlainObject(objectAfter) && !_.isEqual(objectBefore, objectAfter)) {
 
-  return resultDiff;
+    const children = keys.map((item) => getDiff(objectBefore[item], objectAfter[item], item));
+
+    return { key, children };
+  }
+
+  return {};
 };
+
+// const getDiff = (objectBefore, objectAfter) => {
+//   const resultDiff = {};
+
+//   const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
+
+//   if (_.isEqual(objectBefore, objectAfter)) {
+//     console.log('none');
+//     return
+//   }
+  
+//   if (!objectBefore && objectAfter) {
+//     console.log('added');
+//     return objectAfter
+//   }
+
+//   if (objectBefore && !objectAfter) {
+//     console.log('deleted');
+//     return objectBefore
+//   }
+  
+//   if (
+//     (_.isPlainObject(objectBefore) && !_.isPlainObject(objectAfter))
+//     ||
+//     (!_.isPlainObject(objectBefore) && _.isPlainObject(objectAfter))
+//   ) {
+//     console.log('changed');
+//     return objectAfter
+//   }
+
+//   //2 неОбъекта
+//   if (!_.isPlainObject(objectBefore) && !_.isPlainObject(objectAfter)) {
+//     console.log('changed')
+//     return {ob1: objectBefore, ob2: objectAfter}
+//   }
+  
+//   //остается только вариант, когда 2 объекта
+
+//   resultDiff.children = keys.map((item) => getDiff(objectBefore[item], objectAfter[item]));
+
+//   return resultDiff;
+// };
 
 
 // const getDiff = (objectBefore, objectAfter, key = undefined) => {
