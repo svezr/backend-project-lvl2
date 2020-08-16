@@ -16,7 +16,6 @@ const stringifyPlainObject = (object, margin = 0) => {
 
     if (isObject) {
       s += prefix(margin, ' ', key);
-      // s += valueIsObject ? '{' + stringifyPlainObject(object[key], margin + 4) + suffix(margin + 2) + '}' : object[key];
       s += valueIsObject ? `{${stringifyPlainObject(object[key], margin + 4)}${suffix(margin + 2)}}` : object[key];
     } else {
       s += key;

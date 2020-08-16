@@ -34,17 +34,6 @@ const createLine = (item, parentProperty) => {
   // }
 };
 
-const plain = (diff) => {
-  const { children } = diff;
-
-  let styledDiff = '';
-
-  for (let i = 0; i < children.length; i += 1) {
-    const item = children[i];
-    styledDiff += createLine(item);
-  }
-
-  return styledDiff;
-};
+const plain = (diff) => diff.children.reduce((acc, item) => acc + createLine(item), '');
 
 export default plain;
