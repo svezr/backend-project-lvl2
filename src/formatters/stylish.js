@@ -38,6 +38,7 @@ const createLine = (item, margin) => {
   if (_.has(item, 'children')) {
     line = `${prefix(margin, ' ', key)}{`;
 
+    // Заменить на reduce
     for (let i = 0; i < item.children.length; i += 1) {
       const child = item.children[i];
       line += createLine(child, margin + 4);
@@ -50,34 +51,28 @@ const createLine = (item, margin) => {
 
   if (operation === 'add') {
     if (_.isPlainObject(valueAfter)) {
-      line = `${prefix(margin, '+', key)}{${stringifyPlainObject(valueAfter, margin + 4)}${suffix(margin + 2)}}`;
-    } else {
-      line = prefix(margin, '+', key) + valueAfter;
+      return `${prefix(margin, '+', key)}{${stringifyPlainObject(valueAfter, margin + 4)}${suffix(margin + 2)}}`;
     }
 
-    return line;
+    return prefix(margin, '+', key) + valueAfter;
   }
 
   if (operation === 'remove') {
     if (_.isPlainObject(valueBefore)) {
-      line = `${prefix(margin, '-', key)}{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}`;
-    } else {
-      line = prefix(margin, '-', key) + valueBefore;
+      return `${prefix(margin, '-', key)}{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}`;
     }
 
-    return line;
+    return prefix(margin, '-', key) + valueBefore;
   }
 
   if (operation === 'modify') {
     const valueBeforeModify = (_.isPlainObject(valueBefore)) ? `{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}` : valueBefore;
     const valueAfterModify = (_.isPlainObject(valueAfter)) ? `{${stringifyPlainObject(valueAfter, margin + 4)}${suffix(margin + 2)}}` : valueAfter;
 
-    line = prefix(margin, '-', key) + valueBeforeModify;
-    line += prefix(margin, '+', key) + valueAfterModify;
-
-    return line;
+    return prefix(margin, '-', key) + valueBeforeModify + prefix(margin, '+', key) + valueAfterModify;
   }
 
+  // not changed
   if (_.isPlainObject(valueBefore)) {
     line = `${prefix(margin, ' ', key)}{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}`;
   } else {
