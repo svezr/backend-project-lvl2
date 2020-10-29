@@ -5,29 +5,26 @@ const prefix = (margin, sign, key) => `\n${' '.repeat(margin)}${sign} ${key}: `;
 const suffix = (margin) => `\n${' '.repeat(margin)}`;
 
 const stringifyPlainObject = (object, margin = 0) => {
-  let s = '';
-
   const isObject = _.isPlainObject(object);
   const keys = isObject ? Object.keys(object) : [object];
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
+  const resultValue = keys.reduce((acc, key) => {
     const valueIsObject = _.isPlainObject(object[key]);
 
     if (isObject) {
-      s += prefix(margin, ' ', key);
-      s += valueIsObject ? `{${stringifyPlainObject(object[key], margin + 4)}${suffix(margin + 2)}}` : object[key];
-    } else {
-      s += key;
-    }
-  }
+      const linePrefix = prefix(margin, ' ', key);
+      const line = valueIsObject ? `{${stringifyPlainObject(object[key], margin + 4)}${suffix(margin + 2)}}` : object[key];
 
-  return s;
+      return `${acc}${linePrefix}${line}`;
+    }
+
+    return `${acc}${key}`;
+  }, '');
+
+  return resultValue;
 };
 
 const createLine = (item, margin) => {
-  let line;
-
   const {
     operation,
     key,
@@ -36,17 +33,13 @@ const createLine = (item, margin) => {
   } = item;
 
   if (_.has(item, 'children')) {
-    line = `${prefix(margin, ' ', key)}{`;
+    const linePrefix = `${prefix(margin, ' ', key)}{`;
 
-    // Заменить на reduce
-    for (let i = 0; i < item.children.length; i += 1) {
-      const child = item.children[i];
-      line += createLine(child, margin + 4);
-    }
+    const line = item.children.reduce((acc, child) => acc + createLine(child, margin + 4), linePrefix);
 
-    line += `${suffix(margin + 2)}}`;
+    const lineEnd = `${suffix(margin + 2)}}`;
 
-    return line;
+    return `${line}${lineEnd}`;
   }
 
   if (operation === 'add') {
@@ -72,25 +65,17 @@ const createLine = (item, margin) => {
     return prefix(margin, '-', key) + valueBeforeModify + prefix(margin, '+', key) + valueAfterModify;
   }
 
-  // not changed
   if (_.isPlainObject(valueBefore)) {
-    line = `${prefix(margin, ' ', key)}{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}`;
-  } else {
-    line = prefix(margin, ' ', key) + valueBefore;
+    return `${prefix(margin, ' ', key)}{${stringifyPlainObject(valueBefore, margin + 4)}${suffix(margin + 2)}}`;
   }
 
-  return line;
+  return prefix(margin, ' ', key) + valueBefore;
 };
 
 const stylish = (diff, margin = 0) => {
-  let stylishedDiff = '{';
-
   const { children } = diff;
 
-  for (let i = 0; i < children.length; i += 1) {
-    const item = children[i];
-    stylishedDiff += createLine(item, margin + 2);
-  }
+  const stylishedDiff = children.reduce((acc, child) => acc + createLine(child, margin + 2), '{');
 
   return `${stylishedDiff}${suffix(margin)}}`;
 };
