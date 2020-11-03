@@ -9,7 +9,7 @@ const createNode = (operation, key, valueBefore, valueAfter) => ({
   operation, key, valueBefore, valueAfter,
 });
 
-const getDiff = (objectBefore, objectAfter, key) => {
+const getDiffData = (objectBefore, objectAfter, key) => {
   if (_.isEqual(objectBefore, objectAfter)) {
     return createNode('none', key, objectBefore, objectAfter);
   }
@@ -35,7 +35,7 @@ const getDiff = (objectBefore, objectAfter, key) => {
 
   if (_.isPlainObject(objectBefore) && _.isPlainObject(objectAfter) && !_.isEqual(objectBefore, objectAfter)) {
     const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
-    const children = keys.map((item) => getDiff(objectBefore[item], objectAfter[item], item));
+    const children = keys.map((item) => getDiffData(objectBefore[item], objectAfter[item], item));
 
     return { key, children };
   }
@@ -55,7 +55,7 @@ const genDiff = (fileNameBefore, fileNameAfter, format) => {
   const objectBefore = getParsedData(getDataFromFile(fileNameBefore), getFileFormatName(fileNameBefore));
   const objectAfter = getParsedData(getDataFromFile(fileNameAfter), getFileFormatName(fileNameAfter));
 
-  const diff = getDiff(objectBefore, objectAfter);
+  const diff = getDiffData(objectBefore, objectAfter);
 
   const formatDiff = getFormatter(format);
 
