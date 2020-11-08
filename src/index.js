@@ -10,6 +10,10 @@ const createNode = (operation, key, valueBefore, valueAfter) => ({
 });
 
 const getDiffData = (objectBefore, objectAfter, key) => {
+  const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
+
+  // TODO: Далее нужно обойти объекты по ключу keys и возвращать разницу
+
   if (_.isEqual(objectBefore, objectAfter)) {
     return createNode('none', key, objectBefore, objectAfter);
   }
@@ -34,7 +38,6 @@ const getDiffData = (objectBefore, objectAfter, key) => {
   }
 
   if (_.isPlainObject(objectBefore) && _.isPlainObject(objectAfter) && !_.isEqual(objectBefore, objectAfter)) {
-    const keys = _.union(_.keys(objectBefore), _.keys(objectAfter)).sort();
     const children = keys.map((item) => getDiffData(objectBefore[item], objectAfter[item], item));
 
     return { key, children };
