@@ -14,10 +14,16 @@ const getDiffData = (objectBefore, objectAfter, key) => {
 
   // TODO: Далее нужно обойти объекты по ключу keys и возвращать разницу
 
-  // а тут вообще нафига я записывал 'none'???
-  if (_.isEqual(objectBefore, objectAfter)) {
-    return createNode('none', key, objectBefore, objectAfter);
-  }
+  // 1 вариант. проходимся по объектам по ключу
+  // если это объекты - вызываем рекурсивно эту же функцию
+  // если нет - вызываем createNode, в которой и проверяем 
+
+  // 2 вариант. Сравниваем разницу объектов
+
+  // // а тут вообще нафига я записывал 'none'???
+  // if (_.isEqual(objectBefore, objectAfter)) {
+  //   return createNode('none', key, objectBefore, objectAfter);
+  // }
 
   if (!objectBefore && objectAfter) {
     return createNode('add', key, objectBefore, objectAfter);
